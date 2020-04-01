@@ -162,7 +162,5 @@
 
 (define-empty-element meta
   :attributes
-  (list* :charset
-         :content :http-equiv
-         :default-style :refresh
-         :name *global-attributes*))
+  (list (table '(:charset :content :http-equiv :default-style :refresh :name))
+        *global-attributes*))
