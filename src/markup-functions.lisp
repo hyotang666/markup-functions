@@ -10,6 +10,11 @@
 
 (declaim (type (member error warn nil) *strict*))
 
+(defun table (list)
+  (let ((ht (make-hash-table :test #'eq)))
+    (mapc (lambda (elt) (setf (gethash elt ht) elt)) list)
+    ht))
+
 (defparameter *global-attributes*
   '(:accesskey ; Specifies a shortcut key to activate/focus an element
     :class ; Specifies one or more classnames for an element (refers to a class
