@@ -37,3 +37,4 @@
 
 (defvar *inside-of* nil)
 
+(defvar *depth* 0)
