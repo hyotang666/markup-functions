@@ -140,22 +140,22 @@
 
 (defmacro define-empty-element (tag-name &key attributes)
   (check-type tag-name symbol)
-  `(progn
-    (defun ,tag-name (&rest args)
-      (lambda () (format nil (formatter ,(empty-tag tag-name)) (list args))))
-    (define-compiler-macro ,tag-name (&whole whole &rest args)
-      (when *strict*
-        (do* ((args args (cddr args))
-              (key (car args) (car args)))
-             ((null args))
-          (when (and (keywordp key)
-                     (or (not (supportedp key ,attributes))
-                         (not (uiop:string-prefix-p "DATA-" key))))
-            (funcall *strict*
-                     ,(concatenate 'string "Unknown attributes for "
-                                   (princ-to-string tag-name) " tag: ~S")
-                     key))))
-      whole)))
+  `(let ((attributes ,attributes))
+     (defun ,tag-name (&rest args)
+       (lambda () (format nil (formatter ,(empty-tag tag-name)) (list args))))
+     (define-compiler-macro ,tag-name (&whole whole &rest args)
+       (when *strict*
+         (do* ((args args (cddr args))
+               (key (car args) (car args)))
+              ((null args))
+           (when (and (keywordp key)
+                      (or (not (supportedp key attributes))
+                          (not (uiop:string-prefix-p "DATA-" key))))
+             (funcall *strict*
+                      ,(concatenate 'string "Unknown attributes for "
+                                    (princ-to-string tag-name) " tag: ~S")
+                      key))))
+       whole)))
 
 (set-pprint-dispatch '(cons (member define-empty-element))
                      (pprint-dispatch '(block) nil))
