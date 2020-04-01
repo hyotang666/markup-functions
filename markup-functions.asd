@@ -2,7 +2,7 @@
 (in-package :asdf)
 (defsystem "markup-functions"
   :version
-  "0.19.0"
+  "0.19.1"
   :depends-on
   nil
   :pathname
