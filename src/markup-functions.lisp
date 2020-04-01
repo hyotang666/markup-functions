@@ -39,6 +39,11 @@
   (let ((tag (princ-to-string tag)))
     (concatenate 'string "~:<<" tag " ~;" body "~;>~:>")))
 
+(define-compiler-macro empty-tag (&whole whole tag body)
+  (if (and (constantp tag) (constantp body))
+      `(formatter ,(eval whole))
+      whole))
+
 (defvar *inside-of* nil)
 
 (defvar *depth* 0)
