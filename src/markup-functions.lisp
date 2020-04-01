@@ -119,7 +119,7 @@
                         "~{~/markup-function:pprint-put~^ ~_~}")
                    (list (indent) ,args (indent t))))))))
 
-(defmacro define-empty-tag (tag-name &key attributes)
+(defmacro define-empty-element (tag-name &key attributes)
   (check-type tag-name symbol)
   `(progn
     (defun ,tag-name (&rest args)
@@ -138,5 +138,5 @@
                      key))))
       whole)))
 
-(set-pprint-dispatch '(cons (member define-empty-tag))
+(set-pprint-dispatch '(cons (member define-empty-element))
                      (pprint-dispatch '(block) nil))
