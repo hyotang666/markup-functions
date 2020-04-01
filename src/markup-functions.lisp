@@ -23,3 +23,15 @@
         (pprint-exit-if-list-exhausted)
         (write-char #\Space stream)
         (pprint-newline :miser stream)))))
+
+(defun tag (attributes tag body)
+  (let ((tag (princ-to-string tag)))
+    (concatenate 'string "~<<" tag
+                 (let ((attributes
+                        (with-output-to-string (s)
+                          (pprint-attributes s attributes))))
+                   (if (string= "" attributes)
+                       attributes
+                       (concatenate 'string " " attributes)))
+                 ">~VI~_" body "~VI~_</" tag ">~:>")))
+
