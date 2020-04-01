@@ -140,3 +140,10 @@
 
 (set-pprint-dispatch '(cons (member define-empty-element))
                      (pprint-dispatch '(block) nil))
+
+(define-empty-element meta
+  :attributes
+  (list* :charset
+         :content :http-equiv
+         :default-style :refresh
+         :name *global-attributes*))
