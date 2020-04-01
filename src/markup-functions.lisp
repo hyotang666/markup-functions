@@ -114,21 +114,6 @@
   (:method (stream (o float) &rest noise) (declare (ignore noise))
    (write o :stream stream)))
 
-(defmacro standard-attributed-tag-lambda
-          (tag-name attributes args &optional invalids)
-  (let ((gtag (gensym "TAG-NAME")) (ginvalids (gensym "INVALIDS")))
-    `(lambda ()
-       (let ((,gtag ,tag-name))
-         ,@(when invalids
-             `((let ((,ginvalids (intersection *inside-of* ,invalids)))
-                 (when ,ginvalids
-                   (error "~S is invalid inside of ~S" ,gtag ,ginvalids)))))
-         (let ((*inside-of* (cons ,gtag *inside-of*)) (*depth* (1+ *depth*)))
-           (format nil
-                   (tag ,attributes ,gtag
-                        "~{~/markup-function:pprint-put~^ ~_~}")
-                   (list (indent) ,args (indent t))))))))
-
 (defmacro define-empty-element (tag-name &key attributes)
   (check-type tag-name symbol)
   `(let ((attributes ,attributes))
