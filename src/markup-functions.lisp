@@ -149,7 +149,7 @@
               (key (car args) (car args)))
              ((null args))
           (when (and (keywordp key)
-                     (or (not (find key ,attributes))
+                     (or (not (supportedp key ,attributes))
                          (not (uiop:string-prefix-p "DATA-" key))))
             (funcall *strict*
                      ,(concatenate 'string "Unknown attributes for "
