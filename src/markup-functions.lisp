@@ -59,6 +59,7 @@
     (do ((key (pprint-pop) (pprint-pop))
          (*print-escape* nil))
         (nil)
+      (pprint-exit-if-list-exhausted)
       (write key :stream stream)
       (pprint-exit-if-list-exhausted)
       (let ((v (pprint-pop)))
