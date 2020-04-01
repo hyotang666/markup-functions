@@ -171,3 +171,13 @@
         (table
           '(:crossorigin :href :hreflang :media :referrerpolicy :rel :sizes
             :title :type))))
+
+(define-empty-element input
+  :attributes
+  (list *global-attributes* *event-attributes*
+        (table
+          '(:accept :alt :autocomplete :autofocus :checked :dirname :disabled
+            :form :formaction :formenctype :formmethod :formnovalidate
+            :formtarget :height :list :max :maxlength :min :minlength :multiple
+            :name :pattern :placeholder :readonly :required :size :src :step
+            :type :value :width))))
