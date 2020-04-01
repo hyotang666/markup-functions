@@ -35,3 +35,5 @@
                        (concatenate 'string " " attributes)))
                  ">~VI~_" body "~VI~_</" tag ">~:>")))
 
+(defvar *inside-of* nil)
+
