@@ -40,3 +40,11 @@
 (defvar *depth* 0)
 
 (defparameter *indent* 2)
+
+(defun indent (&optional de-indent-p)
+  (*
+    (if de-indent-p
+        (1- *depth*)
+        *depth*)
+    *indent*))
+
