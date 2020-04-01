@@ -118,3 +118,25 @@
                    (tag ,attributes ,gtag
                         "~{~/markup-function:pprint-put~^ ~_~}")
                    (list (indent) ,args (indent t))))))))
+
+(defmacro define-empty-tag (tag-name &key attributes)
+  (check-type tag-name symbol)
+  `(progn
+    (defun ,tag-name (&rest args)
+      (lambda () (format nil (formatter ,(empty-tag tag-name)) (list args))))
+    (define-compiler-macro ,tag-name (&whole whole &rest args)
+      (when *strict*
+        (do* ((args args (cddr args))
+              (key (car args) (car args)))
+             ((null args))
+          (when (and (keywordp key)
+                     (or (not (find key ,attributes))
+                         (not (uiop:string-prefix-p "DATA-" key))))
+            (funcall *strict*
+                     ,(concatenate 'string "Unknown attributes for "
+                                   (princ-to-string tag-name) " tag: ~S")
+                     key))))
+      whole)))
+
+(set-pprint-dispatch '(cons (member define-empty-tag))
+                     (pprint-dispatch '(block) nil))
