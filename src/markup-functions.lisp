@@ -6,6 +6,10 @@
 
 (in-package :markup-functions)
 
+(defparameter *strict* 'error)
+
+(declaim (type (member error warn nil) *strict*))
+
 (defparameter *global-attributes*
   '(:accesskey ; Specifies a shortcut key to activate/focus an element
     :class ; Specifies one or more classnames for an element (refers to a class
