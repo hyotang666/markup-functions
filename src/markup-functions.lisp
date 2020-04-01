@@ -183,3 +183,5 @@
                 (format nil (formatter ,(tag attributes ',name))
                         (list (indent) ,args (indent t))))
              whole)))))
+
+(define-element title :attributes (list *global-attributes*))
