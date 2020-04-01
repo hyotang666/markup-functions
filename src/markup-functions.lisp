@@ -35,6 +35,10 @@
                        (concatenate 'string " " attributes)))
                  ">~VI~_" body "~VI~_</" tag ">~:>")))
 
+(defun empty-tag (tag body)
+  (let ((tag (princ-to-string tag)))
+    (concatenate 'string "~:<<" tag " ~;" body "~;>~:>")))
+
 (defvar *inside-of* nil)
 
 (defvar *depth* 0)
