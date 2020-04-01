@@ -164,3 +164,15 @@
   :attributes
   (list (table '(:charset :content :http-equiv :default-style :refresh :name))
         *global-attributes*))
+
+(define-empty-element link
+  :attributes
+  (list *global-attributes* *event-attributes*
+        (table
+          '(:charset :crossorigin :use-credentials :href :hreflang :media
+            :referrerpolicy :no-referrer-when-downgrade :origin
+            :origin-when-cross-origin :unsafe-url :rel :author :dns-prefetch
+            :help :icon :license :next :pingback :preconnect :prefetch :preload
+            :prerender :prev :search :stylesheet :rev :specifies :sizes :any
+            :target :_self :_top :_parent :frame_name :specifies :title
+            :type))))
