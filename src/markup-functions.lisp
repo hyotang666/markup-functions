@@ -91,11 +91,6 @@
     (concatenate 'string "~:<<" tag
                  " ~;~/markup-functions:pprint-attributes/~;>~:>")))
 
-(define-compiler-macro empty-tag (&whole whole tag)
-  (if (constantp tag)
-      `(formatter ,(eval whole))
-      whole))
-
 (defvar *inside-of* nil)
 
 (defvar *depth* 0)
