@@ -35,6 +35,11 @@
                        (concatenate 'string " " attributes)))
                  ">~VI~_" body "~VI~_</" tag ">~:>")))
 
+(define-compiler-macro tag (&whole whole attributes tag body)
+  (if (and (constantp attributes) (constantp tag) (constantp body))
+      `(formatter (eval whole))
+      whole))
+
 (defun empty-tag (tag body)
   (let ((tag (princ-to-string tag)))
     (concatenate 'string "~:<<" tag " ~;" body "~;>~:>")))
