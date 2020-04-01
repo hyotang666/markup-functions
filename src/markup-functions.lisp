@@ -38,3 +38,5 @@
 (defvar *inside-of* nil)
 
 (defvar *depth* 0)
+
+(defparameter *indent* 2)
