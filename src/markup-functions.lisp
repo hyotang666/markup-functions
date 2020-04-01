@@ -157,3 +157,29 @@
             :formtarget :height :list :max :maxlength :min :minlength :multiple
             :name :pattern :placeholder :readonly :required :size :src :step
             :type :value :width))))
+
+(defmacro define-element (name &key attributes)
+  (check-type name symbol)
+  (let ((attr (gensym "ATTRIBUTES")))
+    `(let ((,attr ,attributes))
+       (defun ,name (attributes &rest args)
+         (lambda ()
+           (format nil (tag attributes ',name)
+                   (list (indent) args (indent t)))))
+       (define-compiler-macro ,name (&whole whole attributes &rest args)
+         (when (and *strict* (constantp attributes))
+           (do* ((rest attributes (cddr attributes))
+                 (key (car rest) (car rest)))
+                ((null rest))
+             (when (and (keywordp key)
+                        (or (not (supportedp key ,attr))
+                            (not (uiop:string-prefix-p "DATA-" key))))
+               (funcall *strict*
+                        ,(concatenate 'string "Unknown attributes for "
+                                      (princ-to-string name) " tag: ~S")
+                        key))))
+         (if (constantp attributes)
+             `(lambda ()
+                (format nil (formatter ,(tag attributes ',name))
+                        (list (indent) ,args (indent t))))
+             whole)))))
