@@ -50,6 +50,8 @@
       ;; Misc event
       :ontoggle)))
 
+(defun supportedp (key list) (some (lambda (ht) (gethash key ht)) list))
+
 (defun pprint-attributes (stream args &rest noise)
   (declare (ignore noise))
   (setf stream (or stream *standard-output*))
