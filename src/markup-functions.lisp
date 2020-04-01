@@ -71,7 +71,7 @@
         (write-char #\Space stream)
         (pprint-newline :miser stream)))))
 
-(defun tag (attributes tag body)
+(defun tag (attributes tag)
   (let ((tag (princ-to-string tag)))
     (concatenate 'string "~<<" tag
                  (let ((attributes
@@ -80,7 +80,7 @@
                    (if (string= "" attributes)
                        attributes
                        (concatenate 'string " " attributes)))
-                 ">~VI~_" body "~VI~_</" tag ">~:>")))
+                 ">~VI~_~{~/markup-functions:pprint-put/~}~VI~_</" tag ">~:>")))
 
 (define-compiler-macro tag (&whole whole attributes tag body)
   (if (and (constantp attributes) (constantp tag) (constantp body))
