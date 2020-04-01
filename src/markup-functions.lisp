@@ -48,3 +48,16 @@
         *depth*)
     *indent*))
 
+(defgeneric pprint-put
+    (stream thing &rest noise)
+  (:method (stream (o null) &rest noise) (declare (ignore noise))
+   ;; do nothing
+   nil)
+  (:method (stream (o string) &rest noise) (declare (ignore noise))
+   (write-string o stream))
+  (:method (stream (o function) &rest noise) (declare (ignore noise))
+   (write-string (funcall o) stream))
+  (:method (stream (o rational) &rest noise) (declare (ignore noise))
+   (write o :stream stream))
+  (:method (stream (o float) &rest noise) (declare (ignore noise))
+   (write o :stream stream)))
