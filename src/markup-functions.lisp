@@ -82,11 +82,6 @@
                        (concatenate 'string " " attributes)))
                  ">~VI~_~{~/markup-functions:pprint-put/~}~VI~_</" tag ">~:>")))
 
-(define-compiler-macro tag (&whole whole attributes tag body)
-  (if (and (constantp attributes) (constantp tag) (constantp body))
-      `(formatter (eval whole))
-      whole))
-
 (defun empty-tag (tag)
   (let ((tag (princ-to-string tag)))
     (concatenate 'string "~:<<" tag
