@@ -40,12 +40,13 @@
       `(formatter (eval whole))
       whole))
 
-(defun empty-tag (tag body)
+(defun empty-tag (tag)
   (let ((tag (princ-to-string tag)))
-    (concatenate 'string "~:<<" tag " ~;" body "~;>~:>")))
+    (concatenate 'string "~:<<" tag
+                 " ~;~/markup-functions:pprint-attributes/~;>~:>")))
 
-(define-compiler-macro empty-tag (&whole whole tag body)
-  (if (and (constantp tag) (constantp body))
+(define-compiler-macro empty-tag (&whole whole tag)
+  (if (constantp tag)
       `(formatter ,(eval whole))
       whole))
 
