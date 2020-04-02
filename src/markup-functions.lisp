@@ -118,12 +118,11 @@
          ,@(let* ((attr (assoc :attributes clauses))
                   (satisfies (getf attr :satisfies)))
              (when satisfies
-               `((when *strict*
-                   (unless (funcall ,satisfies args)
-                     (funcall *strict*
-                              ,(or (getf attr :report)
-                                   "Not satisfies constraint. ~S ~S")
-                              ',satisfies args))))))
+               `((when (and *strict* (not (funcall ,satisfies args)))
+                   (funcall *strict*
+                            ,(or (getf attr :report)
+                                 "Not satisfies constraint. ~S ~S")
+                            ',satisfies args)))))
          (lambda ()
            (signal 'element-existance :tag ',tag-name)
            ,@(let ((valid-parents (assoc :valid-parents clauses)))
