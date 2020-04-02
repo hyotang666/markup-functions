@@ -108,7 +108,8 @@
 (defmacro define-empty-element (tag-name &body clauses)
   (check-type tag-name symbol)
   (dolist (clause clauses)
-    (assert (find (car clause) '(:attributes :valid-parents :satisfies))))
+    (assert (find (car clause)
+                  '(:attributes :valid-parents :satisfies :invalid-parents))))
   (let ((var (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        (defparameter ,var ,(cadr (assoc :attributes clauses)))
@@ -123,6 +124,16 @@
                                               *inside-of*)))
                      (funcall *strict*
                               ,(or (getf valid-parents :report)
+                                   "~A tag is invalid be inside of ~S")
+                              ',tag-name *inside-of*)))))
+           ,@(let ((invalid-parents (find :invalid-parents clauses :key #'car)))
+               (when invalid-parents
+                 `((when (and *strict*
+                              *inside-of*
+                              (intersection ,(cadr invalid-parents)
+                                            *inside-of*))
+                     (funcall *strict*
+                              ,(or (getf invalid-parents :report)
                                    "~A tag is invalid be inside of ~S")
                               ',tag-name *inside-of*)))))
            ,@(let ((satisfies (find :satisfies clauses :key #'car)))
