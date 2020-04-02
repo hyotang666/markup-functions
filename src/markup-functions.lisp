@@ -222,6 +222,10 @@
           '(:accept-charset :action :autocomplete :enctype :method :name
             :novalidate :target))))
 
+(define-element label
+  :attributes
+  (list *global-attributes* *event-attributes* (table '(:for :form))))
+
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) #.(string #\Newline)
                (funcall (apply #'html attributes args))))
