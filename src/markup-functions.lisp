@@ -191,6 +191,8 @@
 
 (define-element head :attributes (list *global-attributes*))
 
+(define-element body :attributes (list *global-attributes* *event-attributes*))
+
 (define-element h1 :attributes (list *global-attributes* *event-attributes*))
 
 (define-element h2 :attributes (list *global-attributes* *event-attributes*))
