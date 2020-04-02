@@ -387,6 +387,8 @@
   (:attributes
      (list *global-attributes* *event-attributes* (table '(:for :form)))))
 
+(define-element b (:attributes (list *global-attributes* *event-attributes*)))
+
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) #.(string #\Newline)
                (funcall (apply #'html attributes args))))
