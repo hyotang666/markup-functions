@@ -161,6 +161,12 @@
   (setf stream (or stream *standard-output*))
   (format stream "~:<~@{~W~^~2I ~:_~W~^~I ~_~}~:>" exp))
 
+(defun pprint-define-empty-element (stream exp)
+  (setf stream (or stream *standard-output*))
+  (format stream
+          "~:<~W~^~3I ~@_~1I~W~^ ~:_~@{~/markup-functions:pprint-clause/~^ ~:_~}~:>"
+          exp))
+
 (define-empty-element !doctype)
 
 (define-empty-element meta
