@@ -230,6 +230,9 @@
                :minlength :multiple :name :pattern :placeholder :readonly
                :required :size :src :step :type :value :width)))))
 
+(define-empty-element br
+  (:attributes (list *global-attributes* *event-attributes*)))
+
 (define-condition element-existance ()
   ((tag :initarg :tag :reader existance-tag)))
 
