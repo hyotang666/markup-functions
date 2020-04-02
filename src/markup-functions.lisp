@@ -50,6 +50,9 @@
       ;; Misc event
       :ontoggle)))
 
+(defgeneric list-all-attributes
+    (thing))
+
 (defun supportedp (key list) (some (lambda (ht) (gethash key ht)) list))
 
 (defun pprint-attributes (stream args &rest noise)
@@ -128,7 +131,14 @@
                       ,(concatenate 'string "Unknown attributes for tag "
                                     (princ-to-string tag-name) ": ~S")
                       key))))
-       whole)))
+       whole)
+     (defmethod list-all-attributes ((s (eql ',tag-name)))
+       (mapcan
+         (lambda (table)
+           (loop :for key :being :each :hash-key :of table
+                 :collect key))
+         attributes))
+     ',tag-name))
 
 (set-pprint-dispatch '(cons (member define-empty-element))
                      (pprint-dispatch '(block) nil))
@@ -199,7 +209,14 @@
                                          ">~VI~_~{~/markup-functions:pprint-put/~}~VI~_</"
                                          (princ-to-string ',name) ">~:>"))
                           (list (indent) (list ,@args) (indent t)))))
-             whole)))))
+             whole))
+       (defmethod list-all-attributes ((o (eql ',name)))
+         (mapcan
+           (lambda (table)
+             (loop :for key :being :each :hash-key :of table
+                   :collect key))
+           ,attr))
+       ',name)))
 
 (set-pprint-dispatch '(cons (member define-element))
                      (pprint-dispatch '(block) nil))
