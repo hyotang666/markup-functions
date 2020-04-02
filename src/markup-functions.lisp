@@ -309,8 +309,7 @@
   (:attributes (list *global-attributes* *event-attributes*)))
 
 (define-element footer
-  :attributes
-  (list *global-attributes* *event-attributes*))
+  (:attributes (list *global-attributes* *event-attributes*)))
 
 (define-element h1 :attributes (list *global-attributes* *event-attributes*))
 
