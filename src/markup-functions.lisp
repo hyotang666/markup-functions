@@ -187,7 +187,8 @@
                                              (with-output-to-string (s)
                                                (write-char #\Space s)
                                                (pprint-attributes s
-                                                                  attributes)))
+                                                                  (eval
+                                                                    attributes))))
                                          ">~VI~_~{~/markup-functions:pprint-put/~}~VI~_</"
                                          (princ-to-string ',name) ">~:>"))
                           (list (indent) ,args (indent t)))))
