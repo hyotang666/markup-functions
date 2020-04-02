@@ -273,7 +273,7 @@
                                ,(concatenate 'string "~<<"
                                              (princ-to-string name)
                                              "~@[ ~/markup-functions:pprint-attributes/~]>"
-                                             "~VI~_~{~/markup-functions:pprint-put/~}~VI~_</"
+                                             "~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</"
                                              (princ-to-string name) ">~:>"))
                               (list attributes (indent) args (indent t)))))
                  ,@(let ((require (find :require clauses :key #'car)))
@@ -312,7 +312,7 @@
                                                (pprint-attributes s
                                                                   (eval
                                                                     attributes))))
-                                         ">~VI~_~{~/markup-functions:pprint-put/~}~VI~_</"
+                                         ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</"
                                          (princ-to-string ',name) ">~:>"))
                           (list (indent) (list ,@args) (indent t)))))
              whole))
