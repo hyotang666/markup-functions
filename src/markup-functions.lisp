@@ -301,7 +301,7 @@
   (:require '(title)
    :report "The <title> tag is required in all HTML documents"))
 
-(define-element title :attributes (list *global-attributes*))
+(define-element title (:attributes (list *global-attributes*)))
 
 (define-element head :attributes (list *global-attributes*))
 
