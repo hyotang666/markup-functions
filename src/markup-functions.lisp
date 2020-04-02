@@ -181,7 +181,10 @@
 (set-pprint-dispatch '(cons (member define-empty-element))
                      'pprint-define-empty-element)
 
-(define-empty-element !doctype)
+(define-empty-element !doctype
+  (:invalid-parents '(html)
+   :report
+     "The <html> tag is the container for all other HTML elements (except for the <!DOCTYPE> tag)."))
 
 (define-empty-element meta
   (:attributes
