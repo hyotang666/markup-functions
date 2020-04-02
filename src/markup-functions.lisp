@@ -230,6 +230,8 @@
   :attributes
   (list *global-attributes* *event-attributes*))
 
+(define-element main :attributes (list *global-attributes* *event-attributes*))
+
 (define-element form
   :attributes
   (list *global-attributes* *event-attributes*
