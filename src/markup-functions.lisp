@@ -225,3 +225,11 @@
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) #.(string #\Newline)
                (funcall (apply #'html attributes args))))
+
+#++
+(defun retrieve (url)
+  (dev:put-expand
+    (mapcar (lambda (key) (intern (string-upcase key) :keyword))
+            (map 'list #'plump:text
+                 (clss:select "#table1 td:first-child"
+                              (plump:parse (dex:get url)))))))
