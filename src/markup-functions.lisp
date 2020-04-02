@@ -110,10 +110,10 @@
   (dolist (clause clauses)
     (assert (find (car clause)
                   '(:attributes :valid-parents :invalid-parents))))
-  (let ((var (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
+  (let ((supported-attributes (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        ,@(when (cadr (assoc :attributes clauses))
-           `((defparameter ,var ,(cadr (assoc :attributes clauses)))))
+           `((defparameter ,supported-attributes ,(cadr (assoc :attributes clauses)))))
        (defun ,tag-name (&rest args)
          ,@(let* ((attr (assoc :attributes clauses))
                   (satisfies (getf attr :satisfies)))
@@ -154,8 +154,8 @@
                        (key (car args) (car args)))
                       ((null args))
                    (when (and (keywordp key)
-                              ,var
-                              (not (supportedp key ,var))
+                              ,supported-attributes
+                              (not (supportedp key ,supported-attributes))
                               (not (uiop:string-prefix-p "DATA-" key)))
                      (funcall *strict*
                               ,(concatenate 'string
@@ -169,7 +169,7 @@
                (lambda (table)
                  (loop :for key :being :each :hash-key :of table
                        :collect key))
-               ,var)))
+               ,supported-attributes)))
        ',tag-name)))
 
 (defun pprint-clause (stream exp &rest noise)
