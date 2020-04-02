@@ -215,6 +215,13 @@
 
 (define-element p :attributes (list *global-attributes* *event-attributes*))
 
+(define-element form
+  :attributes
+  (list *global-attributes* *event-attributes*
+        (table
+          '(:accept-charset :action :autocomplete :enctype :method :name
+            :novalidate :target))))
+
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) #.(string #\Newline)
                (funcall (apply #'html attributes args))))
