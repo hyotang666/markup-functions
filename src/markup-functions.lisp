@@ -112,7 +112,8 @@
                   '(:attributes :valid-parents :invalid-parents))))
   (let ((var (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
-       (defparameter ,var ,(cadr (assoc :attributes clauses)))
+       ,@(when (cadr (assoc :attributes clauses))
+           `((defparameter ,var ,(cadr (assoc :attributes clauses)))))
        (defun ,tag-name (&rest args)
          ,@(let* ((attr (assoc :attributes clauses))
                   (satisfies (getf attr :satisfies)))
@@ -147,26 +148,29 @@
                                    "~A tag is invalid be inside of ~S")
                               ',tag-name *inside-of*)))))
            (format nil (formatter ,(empty-tag tag-name)) (list args))))
-       (define-compiler-macro ,tag-name (&whole whole &rest args)
-         (when *strict*
-           (do* ((args args (cddr args))
-                 (key (car args) (car args)))
-                ((null args))
-             (when (and (keywordp key)
-                        ,var
-                        (not (supportedp key ,var))
-                        (not (uiop:string-prefix-p "DATA-" key)))
-               (funcall *strict*
-                        ,(concatenate 'string "Unknown attributes for tag "
-                                      (princ-to-string tag-name) ": ~S")
-                        key))))
-         whole)
+       ,@(when (cadr (assoc :attributes clauses))
+           `((define-compiler-macro ,tag-name (&whole whole &rest args)
+               (when *strict*
+                 (do* ((args args (cddr args))
+                       (key (car args) (car args)))
+                      ((null args))
+                   (when (and (keywordp key)
+                              ,var
+                              (not (supportedp key ,var))
+                              (not (uiop:string-prefix-p "DATA-" key)))
+                     (funcall *strict*
+                              ,(concatenate 'string
+                                            "Unknown attributes for tag "
+                                            (princ-to-string tag-name) ": ~S")
+                              key))))
+               whole)))
        (defmethod list-all-attributes ((s (eql ',tag-name)))
-         (mapcan
-           (lambda (table)
-             (loop :for key :being :each :hash-key :of table
-                   :collect key))
-           ,var))
+         ,(when (cadr (assoc :attributes clauses))
+            `(mapcan
+               (lambda (table)
+                 (loop :for key :being :each :hash-key :of table
+                       :collect key))
+               ,var)))
        ',tag-name)))
 
 (defun pprint-clause (stream exp &rest noise)
