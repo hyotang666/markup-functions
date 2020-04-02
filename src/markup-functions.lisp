@@ -167,41 +167,48 @@
           "~:<~W~^~3I ~@_~1I~W~^ ~:_~@{~/markup-functions:pprint-clause/~^ ~:_~}~:>"
           exp))
 
+(set-pprint-dispatch '(cons (member define-empty-element))
+                     'pprint-define-empty-element)
+
 (define-empty-element !doctype)
 
 (define-empty-element meta
   (:attributes
-   (list (table '(:charset :content :http-equiv :default-style :refresh :name))
-         *global-attributes*))
-  (:valid-parents '(head) :report
-   "<meta> tags always go inside the <head> element.")
+     (list
+       (table '(:charset :content :http-equiv :default-style :refresh :name))
+       *global-attributes*))
+  (:valid-parents '(head)
+   :report "<meta> tags always go inside the <head> element.")
   (:satisfies
-   (lambda (attributes)
-     (flet ((must-pair (elt)
-              (find elt '(:name :http-equiv))))
-       (if (getf attributes :content)
-           (some #'must-pair attributes)
-           (notany #'must-pair attributes))))
+     (lambda (attributes)
+       (flet ((must-pair (elt)
+                (find elt '(:name :http-equiv))))
+         (if (getf attributes :content)
+             (some #'must-pair attributes)
+             (notany #'must-pair attributes))))
    :report
-   "The content attribute MUST be defined if the name or the http-equiv attribute is defined.~:@_~
-    If none of these are defined, the content attribute CANNOT be defined."))
+     "The content attribute MUST be defined if the name or the http-equiv attribute is defined.~:@_~
+     If none of these are defined, the content attribute CANNOT be defined."))
 
 (define-empty-element link
   (:attributes
-   (list *global-attributes* *event-attributes*
-         (table
-           '(:crossorigin :href :hreflang :media :referrerpolicy :rel :sizes
-             :title :type)))))
+     (list *global-attributes* *event-attributes*
+           (table
+             '(:crossorigin :href :hreflang :media :referrerpolicy :rel :sizes
+               :title :type))))
+  (:valid-parents '(head)
+   :report
+     "The <link> element goes only in the head section, but it can appear any number of times."))
 
 (define-empty-element input
   (:attributes
-   (list *global-attributes* *event-attributes*
-         (table
-           '(:accept :alt :autocomplete :autofocus :checked :dirname :disabled
-             :form :formaction :formenctype :formmethod :formnovalidate
-             :formtarget :height :list :max :maxlength :min :minlength
-             :multiple :name :pattern :placeholder :readonly :required :size
-             :src :step :type :value :width)))))
+     (list *global-attributes* *event-attributes*
+           (table
+             '(:accept :alt :autocomplete :autofocus :checked :dirname
+               :disabled :form :formaction :formenctype :formmethod
+               :formnovalidate :formtarget :height :list :max :maxlength :min
+               :minlength :multiple :name :pattern :placeholder :readonly
+               :required :size :src :step :type :value :width)))))
 
 (defmacro define-element (name &key attributes)
   (check-type name symbol)
