@@ -348,7 +348,7 @@
 
 (define-element div (:attributes (list *global-attributes* *event-attributes*)))
 
-(define-element nav :attributes (list *global-attributes* *event-attributes*))
+(define-element nav (:attributes (list *global-attributes* *event-attributes*)))
 
 (define-element header
   :attributes
