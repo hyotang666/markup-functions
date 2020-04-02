@@ -190,6 +190,8 @@
                         (list (indent) ,args (indent t))))
              whole)))))
 
+(define-element html :attributes (list *global-attributes* (table '(:xmlns))))
+
 (define-element title :attributes (list *global-attributes*))
 
 (define-element head :attributes (list *global-attributes*))
