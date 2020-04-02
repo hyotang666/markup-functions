@@ -224,6 +224,9 @@
                :minlength :multiple :name :pattern :placeholder :readonly
                :required :size :src :step :type :value :width)))))
 
+(define-condition element-existance ()
+  ((tag :initarg :tag :reader existance-tag)))
+
 (defmacro define-element (name &key attributes)
   (check-type name symbol)
   (let ((attr (gensym "ATTRIBUTES")))
