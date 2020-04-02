@@ -224,6 +224,8 @@
 
 (define-element div :attributes (list *global-attributes* *event-attributes*))
 
+(define-element nav :attributes (list *global-attributes* *event-attributes*))
+
 (define-element form
   :attributes
   (list *global-attributes* *event-attributes*
