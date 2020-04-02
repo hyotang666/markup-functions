@@ -166,7 +166,7 @@
                      (list attributes (indent) args (indent t))))))
        (define-compiler-macro ,name (&whole whole attributes &rest args)
          (when (and *strict* (constantp attributes))
-           (do* ((rest attributes (cddr attributes))
+           (do* ((rest (eval attributes) (cddr rest))
                  (key (car rest) (car rest)))
                 ((null rest))
              (when (and (keywordp key)
