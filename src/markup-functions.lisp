@@ -179,7 +179,7 @@
           "~:<~W~^~3I ~@_~1I~W~^ ~_~@{~/markup-functions:pprint-clause/~^ ~:_~}~:>"
           exp))
 
-(set-pprint-dispatch '(cons (member define-empty-element))
+(set-pprint-dispatch '(cons (member define-empty-element define-element))
                      'pprint-define-empty-element)
 
 (define-empty-element !doctype
@@ -295,9 +295,6 @@
                    :collect key))
            ,attr))
        ',name)))
-
-(set-pprint-dispatch '(cons (member define-element))
-                     (pprint-dispatch '(block) nil))
 
 (define-element html :attributes (list *global-attributes* (table '(:xmlns))))
 
