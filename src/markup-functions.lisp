@@ -149,7 +149,9 @@
 (define-empty-element meta
   :attributes
   (list (table '(:charset :content :http-equiv :default-style :refresh :name))
-        *global-attributes*))
+        *global-attributes*)
+  :valid-parents
+  '(head))
 
 (define-empty-element link
   :attributes
