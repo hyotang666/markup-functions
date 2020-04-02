@@ -6,49 +6,47 @@
 
 (in-package :markup-functions)
 
-(defparameter *strict* 'error)
-
-(declaim (type (member error warn nil) *strict*))
-
-(defun table (list)
-  (let ((ht (make-hash-table :test #'eq)))
-    (mapc (lambda (elt) (setf (gethash elt ht) elt)) list)
-    ht))
-
-(defparameter *global-attributes*
-  (table
-    '(:accesskey :class :contenteditable :dir :draggable :dropzone :hidden :id
-      :lang :spellcheck :style :tabindex :title :translate
-      ;; :data-*
-      )))
-
-(defparameter *event-attributes*
-  (table
-    '(
-      ;; Window events.
-      :onafterprint :onbeforeprint :onbeforeunload :onerror :onhashchange
-      :onload :onmessage :onoffline :ononline :onpagehide :onpageshow
-      :onpopstate :onresize :onstorage :onunload
-      ;; Form events
-      :onblur :onchange :oncontextmenu :onfocus :oninput :oninvalid :onreset
-      :onsearch :onselect :onsubmit
-      ;; Keyboard events
-      :onkeydown :onkeypress :onkeyup
-      ;; Mouse events
-      :onclick :ondblclick :onmousedown :onmousemove :onmouseout :onmouseover
-      :onmouseup :onmousewheel :onwheel
-      ;; Drag events
-      :ondrag :ondragend :ondragenter :ondragleave :ondragover :ondragstart
-      :ondrop :onscroll
-      ;; Clipboard events
-      :oncopy :oncut :onpaste
-      ;; Media events
-      :onabort :oncanplay :oncanplaythroug :oncuechange :ondurationchang
-      :onemptied :onended :onerror :onloadeddata :onloadedmetadat :onloadstart
-      :onpause :onplay :onplaying :onprogress :onratechange :onseeked
-      :onseeking :onstalled :onsuspend :ontimeupdate :onvolumechange :onwaiting
-      ;; Misc event
-      :ontoggle)))
+(eval-when (:load-toplevel :compile-toplevel :execute)
+  (defparameter *strict* 'error)
+  (declaim (type (member error warn nil) *strict*))
+  (defun table (list)
+    (let ((ht (make-hash-table :test #'eq)))
+      (mapc (lambda (elt) (setf (gethash elt ht) elt)) list)
+      ht))
+  (defparameter *global-attributes*
+    (table
+      '(:accesskey :class :contenteditable :dir :draggable :dropzone :hidden
+        :id :lang :spellcheck :style :tabindex :title :translate
+        ;; :data-*
+        )))
+  (defparameter *event-attributes*
+    (table
+      '(
+        ;; Window events.
+        :onafterprint :onbeforeprint :onbeforeunload :onerror :onhashchange
+        :onload :onmessage :onoffline :ononline :onpagehide :onpageshow
+        :onpopstate :onresize :onstorage :onunload
+        ;; Form events
+        :onblur :onchange :oncontextmenu :onfocus :oninput :oninvalid
+        :onreset :onsearch :onselect :onsubmit
+        ;; Keyboard events
+        :onkeydown :onkeypress :onkeyup
+        ;; Mouse events
+        :onclick :ondblclick :onmousedown :onmousemove :onmouseout
+        :onmouseover :onmouseup :onmousewheel :onwheel
+        ;; Drag events
+        :ondrag :ondragend :ondragenter :ondragleave :ondragover :ondragstart
+        :ondrop :onscroll
+        ;; Clipboard events
+        :oncopy :oncut :onpaste
+        ;; Media events
+        :onabort :oncanplay :oncanplaythroug :oncuechange :ondurationchang
+        :onemptied :onended :onerror :onloadeddata :onloadedmetadat
+        :onloadstart :onpause :onplay :onplaying :onprogress :onratechange
+        :onseeked :onseeking :onstalled :onsuspend :ontimeupdate
+        :onvolumechange :onwaiting
+        ;; Misc event
+        :ontoggle))))
 
 (defgeneric list-all-attributes
     (thing))
@@ -74,10 +72,11 @@
         (write-char #\Space stream)
         (pprint-newline :miser stream)))))
 
-(defun empty-tag (tag)
-  (let ((tag (princ-to-string tag)))
-    (concatenate 'string "~:<<" tag
-                 " ~;~/markup-functions:pprint-attributes/~;>~:>")))
+(eval-when (:load-toplevel :compile-toplevel :execute)
+  (defun empty-tag (tag)
+    (let ((tag (princ-to-string tag)))
+      (concatenate 'string "~:<<" tag
+                   " ~;~/markup-functions:pprint-attributes/~;>~:>"))))
 
 (defvar *inside-of* nil)
 
@@ -108,37 +107,39 @@
 
 (defmacro define-empty-element (tag-name &key attributes valid-parents)
   (check-type tag-name symbol)
-  `(let ((attributes ,attributes))
-     (defun ,tag-name (&rest args)
-       (lambda ()
-         ,@(when valid-parents
-             `((when (and *strict*
-                          *inside-of*
-                          (not (intersection ,valid-parents *inside-of*)))
-                 (funcall *strict* "~A tag is invalid be inside of ~S"
-                          ',tag-name *inside-of*))))
-         (format nil (formatter ,(empty-tag tag-name)) (list args))))
-     (define-compiler-macro ,tag-name (&whole whole &rest args)
-       (when *strict*
-         (do* ((args args (cddr args))
-               (key (car args) (car args)))
-              ((null args))
-           (when (and (keywordp key)
-                      attributes
-                      (or (not (supportedp key attributes))
-                          (not (uiop:string-prefix-p "DATA-" key))))
-             (funcall *strict*
-                      ,(concatenate 'string "Unknown attributes for tag "
-                                    (princ-to-string tag-name) ": ~S")
-                      key))))
-       whole)
-     (defmethod list-all-attributes ((s (eql ',tag-name)))
-       (mapcan
-         (lambda (table)
-           (loop :for key :being :each :hash-key :of table
-                 :collect key))
-         attributes))
-     ',tag-name))
+  (let ((var (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
+    `(eval-when (:compile-toplevel :load-toplevel :execute)
+       (defparameter ,var ,attributes)
+       (defun ,tag-name (&rest args)
+         (lambda ()
+           ,@(when valid-parents
+               `((when (and *strict*
+                            *inside-of*
+                            (not (intersection ,valid-parents *inside-of*)))
+                   (funcall *strict* "~A tag is invalid be inside of ~S"
+                            ',tag-name *inside-of*))))
+           (format nil (formatter ,(empty-tag tag-name)) (list args))))
+       (define-compiler-macro ,tag-name (&whole whole &rest args)
+         (when *strict*
+           (do* ((args args (cddr args))
+                 (key (car args) (car args)))
+                ((null args))
+             (when (and (keywordp key)
+                        ,var
+                        (or (not (supportedp key ,var))
+                            (not (uiop:string-prefix-p "DATA-" key))))
+               (funcall *strict*
+                        ,(concatenate 'string "Unknown attributes for tag "
+                                      (princ-to-string tag-name) ": ~S")
+                        key))))
+         whole)
+       (defmethod list-all-attributes ((s (eql ',tag-name)))
+         (mapcan
+           (lambda (table)
+             (loop :for key :being :each :hash-key :of table
+                   :collect key))
+           ,var))
+       ',tag-name)))
 
 (set-pprint-dispatch '(cons (member define-empty-element))
                      (pprint-dispatch '(block) nil))
