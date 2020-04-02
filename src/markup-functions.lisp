@@ -253,7 +253,7 @@
                      (when require
                        `((when (and *strict*
                                     (not
-                                      (intersection result ,(cadr require))))
+                                      (intersection elements ,(cadr require))))
                            (funcall *strict*
                                     ,(or (getf require :report)
                                          "Missing required elements. ~S")
