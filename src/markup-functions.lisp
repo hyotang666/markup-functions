@@ -114,6 +114,15 @@
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        (defparameter ,var ,(cadr (assoc :attributes clauses)))
        (defun ,tag-name (&rest args)
+         ,@(let* ((attr (assoc :attributes clauses))
+                  (satisfies (getf attr :satisfies)))
+             (when satisfies
+               `((when *strict*
+                   (unless (funcall ,satisfies args)
+                     (funcall *strict*
+                              ,(or (getf attr :report)
+                                   "Not satisfies constraint. ~S ~S")
+                              ',satisfies args))))))
          (lambda ()
            (signal 'element-existance :tag ',tag-name)
            ,@(let ((valid-parents (find :valid-parents clauses :key #'car)))
@@ -137,15 +146,6 @@
                               ,(or (getf invalid-parents :report)
                                    "~A tag is invalid be inside of ~S")
                               ',tag-name *inside-of*)))))
-           ,@(let* ((attr (assoc :attributes clauses))
-                    (satisfies (getf attr :satisfies)))
-               (when satisfies
-                 `((when *strict*
-                     (unless (funcall ,satisfies args)
-                       (funcall *strict*
-                                ,(or (getf attr :report)
-                                     "Not satisfies constraint. ~S ~S")
-                                ',satisfies args))))))
            (format nil (formatter ,(empty-tag tag-name)) (list args))))
        (define-compiler-macro ,tag-name (&whole whole &rest args)
          (when *strict*
