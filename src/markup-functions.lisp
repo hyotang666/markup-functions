@@ -209,3 +209,7 @@
 (define-element h5 :attributes (list *global-attributes* *event-attributes*))
 
 (define-element h6 :attributes (list *global-attributes* *event-attributes*))
+
+(defun html5 (attributes &rest args)
+  (concatenate 'string (funcall (!doctype :html)) #.(string #\Newline)
+               (funcall (apply #'html attributes args))))
