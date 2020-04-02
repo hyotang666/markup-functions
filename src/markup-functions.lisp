@@ -333,11 +333,18 @@
 (define-element p (:attributes (list *global-attributes* *event-attributes*)))
 
 (define-element a
-  :attributes
-  (list *global-attributes* *event-attributes*
-        (table
-          '(:type :target :rel :referrerpolicy :ping :media :hreflang :href
-            :download))))
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table
+             '(:type :target :rel :referrerpolicy :ping :media :hreflang :href
+               :download)))
+   :satisfies
+     (lambda (attributes)
+       (if (intersection '(:download :hreflang :media :rel :target :type)
+                         attributes)
+           (getf attributes :href)
+           t))
+   :report "href attribute is not present."))
 
 (define-element div :attributes (list *global-attributes* *event-attributes*))
 
