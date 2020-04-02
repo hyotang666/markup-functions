@@ -126,8 +126,8 @@
                 ((null args))
              (when (and (keywordp key)
                         ,var
-                        (or (not (supportedp key ,var))
-                            (not (uiop:string-prefix-p "DATA-" key))))
+                        (not (supportedp key ,var))
+                        (not (uiop:string-prefix-p "DATA-" key)))
                (funcall *strict*
                         ,(concatenate 'string "Unknown attributes for tag "
                                       (princ-to-string tag-name) ": ~S")
