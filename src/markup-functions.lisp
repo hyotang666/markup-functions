@@ -231,11 +231,20 @@
 (defmacro define-element (name &body clauses)
   (check-type name symbol)
   (dolist (clause clauses)
-    (assert (find (car clause) '(:attributes :require))))
+    (assert (find (car clause) '(:attributes :require :invalid-parents))))
   (let ((attr (gensym "ATTRIBUTES")))
     `(let ((,attr ,(cadr (assoc :attributes clauses))))
        (defun ,name (attributes &rest args)
          (lambda ()
+           ,@(let ((invalids (assoc :invalid-parents clauses)))
+               (when invalids
+                 `((when (and *strict*
+                              (intersection ,(getf invalids :invalid-parents)
+                                            *inside-of*))
+                     (funcall *strict*
+                              ,(or (getf invalids :report)
+                                   "~S could not inside of ~S")
+                              ',name *inside-of*)))))
            ,@(let* ((attr (assoc :attributes clauses))
                     (satisfies (getf attr :satisfies)))
                (when satisfies
