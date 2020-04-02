@@ -122,12 +122,27 @@
   (dolist (clause clauses)
     (assert (find (car clause)
                   '(:attributes :valid-parents :invalid-parents))))
-  (let ((supported-attributes (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
+  (let ((supported-attributes (intern (format nil "*~A-ATTRIBUTES*" tag-name)))
+        (checker (intern (format nil "CHECK-~A-ATTRIBUTES" tag-name))))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        ,@(when (cadr (assoc :attributes clauses))
            `((defparameter ,supported-attributes
                ,(cadr (assoc :attributes clauses)))))
+       ,@(when (cadr (assoc :attributes clauses))
+           `((defun ,checker (attributes)
+               (when *strict*
+                 (do* ((rest attributes (cddr rest))
+                       (key (car rest) (car rest)))
+                      ((null rest))
+                   (when (and (keywordp key)
+                              ,supported-attributes
+                              (not (supportedp key ,supported-attributes))
+                              (not (uiop:string-prefix-p "DATA-" key)))
+                     (funcall *strict* "Unknown attributes for tag ~A: ~S"
+                              ',tag-name key)))))))
        (defun ,tag-name (&rest args)
+         ,@(when (cadr (assoc :attributes clauses))
+             `((,checker args)))
          ,@(let* ((attr (assoc :attributes clauses))
                   (satisfies (getf attr :satisfies)))
              (when satisfies
@@ -143,19 +158,7 @@
            (format nil (formatter ,(empty-tag tag-name)) (list args))))
        ,@(when (cadr (assoc :attributes clauses))
            `((define-compiler-macro ,tag-name (&whole whole &rest args)
-               (when *strict*
-                 (do* ((args args (cddr args))
-                       (key (car args) (car args)))
-                      ((null args))
-                   (when (and (keywordp key)
-                              ,supported-attributes
-                              (not (supportedp key ,supported-attributes))
-                              (not (uiop:string-prefix-p "DATA-" key)))
-                     (funcall *strict*
-                              ,(concatenate 'string
-                                            "Unknown attributes for tag "
-                                            (princ-to-string tag-name) ": ~S")
-                              key))))
+               (,checker args)
                whole)))
        (defmethod list-all-attributes ((s (eql ',tag-name)))
          ,(when (cadr (assoc :attributes clauses))
