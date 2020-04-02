@@ -215,6 +215,13 @@
 
 (define-element p :attributes (list *global-attributes* *event-attributes*))
 
+(define-element a
+  :attributes
+  (list *global-attributes* *event-attributes*
+        (table
+          '(:type :target :rel :referrerpolicy :ping :media :hreflang :href
+            :download))))
+
 (define-element form
   :attributes
   (list *global-attributes* *event-attributes*
