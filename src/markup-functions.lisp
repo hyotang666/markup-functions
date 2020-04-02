@@ -191,7 +191,7 @@
                                                                     attributes))))
                                          ">~VI~_~{~/markup-functions:pprint-put/~}~VI~_</"
                                          (princ-to-string ',name) ">~:>"))
-                          (list (indent) ,args (indent t)))))
+                          (list (indent) (list ,@args) (indent t)))))
              whole)))))
 
 (set-pprint-dispatch '(cons (member define-element))
