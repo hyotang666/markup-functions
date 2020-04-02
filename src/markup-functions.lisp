@@ -115,6 +115,7 @@
        (defparameter ,var ,(cadr (assoc :attributes clauses)))
        (defun ,tag-name (&rest args)
          (lambda ()
+           (signal 'element-existance :tag ',tag-name)
            ,@(let ((valid-parents (find :valid-parents clauses :key #'car)))
                (when valid-parents
                  `((when (and *strict*
