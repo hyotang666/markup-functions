@@ -201,6 +201,10 @@
 
 (define-element body :attributes (list *global-attributes* *event-attributes*))
 
+(define-element footer
+  :attributes
+  (list *global-attributes* *event-attributes*))
+
 (define-element h1 :attributes (list *global-attributes* *event-attributes*))
 
 (define-element h2 :attributes (list *global-attributes* *event-attributes*))
