@@ -164,8 +164,13 @@
     `(let ((,attr ,attributes))
        (defun ,name (attributes &rest args)
          (lambda ()
-           (format nil (tag attributes ',name)
-                   (list (indent) args (indent t)))))
+           (format nil
+                   (formatter
+                    ,(concatenate 'string "~<<" (princ-to-string name)
+                                  "~@[ ~/markup-functions:pprint-attributes/~]>"
+                                  "~VI~_~{~/markup-functions:pprint-put/~}~VI~_</"
+                                  (princ-to-string name) ">~:>"))
+                   (list attributes (indent) args (indent t)))))
        (define-compiler-macro ,name (&whole whole attributes &rest args)
          (when (and *strict* (constantp attributes))
            (do* ((rest attributes (cddr attributes))
@@ -180,7 +185,16 @@
                         key))))
          (if (constantp attributes)
              `(lambda ()
-                (format nil (formatter ,(tag attributes ',name))
+                (format nil
+                        (formatter
+                         ,(concatenate 'string "~<<" (princ-to-string ',name)
+                                       (if (null attributes)
+                                           ""
+                                           (with-output-to-string (s)
+                                             (write-char #\Space s)
+                                             (pprint-attributes s attributes)))
+                                       ">~VI~_~{~/markup-functions:pprint-put/~}~VI~_</"
+                                       (princ-to-string ',name) ">~:>"))
                         (list (indent) ,args (indent t))))
              whole)))))
 
