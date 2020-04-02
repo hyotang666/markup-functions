@@ -125,6 +125,8 @@
 (set-pprint-dispatch '(cons (member define-empty-element))
                      (pprint-dispatch '(block) nil))
 
+(define-empty-element !doctype)
+
 (define-empty-element meta
   :attributes
   (list (table '(:charset :content :http-equiv :default-style :refresh :name))
