@@ -303,7 +303,7 @@
 
 (define-element title (:attributes (list *global-attributes*)))
 
-(define-element head :attributes (list *global-attributes*))
+(define-element head (:attributes (list *global-attributes*)))
 
 (define-element body :attributes (list *global-attributes* *event-attributes*))
 
