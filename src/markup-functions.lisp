@@ -346,7 +346,7 @@
            t))
    :report "href attribute is not present."))
 
-(define-element div :attributes (list *global-attributes* *event-attributes*))
+(define-element div (:attributes (list *global-attributes* *event-attributes*)))
 
 (define-element nav :attributes (list *global-attributes* *event-attributes*))
 
