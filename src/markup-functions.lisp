@@ -311,17 +311,17 @@
 (define-element footer
   (:attributes (list *global-attributes* *event-attributes*)))
 
-(define-element h1 :attributes (list *global-attributes* *event-attributes*))
+(define-element h1 (:attributes (list *global-attributes* *event-attributes*)))
 
-(define-element h2 :attributes (list *global-attributes* *event-attributes*))
+(define-element h2 (:attributes (list *global-attributes* *event-attributes*)))
 
-(define-element h3 :attributes (list *global-attributes* *event-attributes*))
+(define-element h3 (:attributes (list *global-attributes* *event-attributes*)))
 
-(define-element h4 :attributes (list *global-attributes* *event-attributes*))
+(define-element h4 (:attributes (list *global-attributes* *event-attributes*)))
 
-(define-element h5 :attributes (list *global-attributes* *event-attributes*))
+(define-element h5 (:attributes (list *global-attributes* *event-attributes*)))
 
-(define-element h6 :attributes (list *global-attributes* *event-attributes*))
+(define-element h6 (:attributes (list *global-attributes* *event-attributes*)))
 
 (define-element p :attributes (list *global-attributes* *event-attributes*))
 
