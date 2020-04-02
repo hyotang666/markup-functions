@@ -261,7 +261,9 @@
                               ,(or (getf invalids :report)
                                    "~S could not inside of ~S")
                               ',name *inside-of*)))))
-           (let ((*inside-of* (cons ',name *inside-of*)) elements)
+           (let ((*inside-of* (cons ',name *inside-of*))
+                 elements
+                 (*depth* (1+ *depth*)))
              (handler-bind ((element-existance
                              (lambda (condition)
                                (push (existance-tag condition) elements))))
@@ -298,7 +300,8 @@
                         key))))
          (if (constantp attributes)
              `(lambda ()
-                (let ((*inside-of* (cons ',',name *inside-of*)))
+                (let ((*inside-of* (cons ',',name *inside-of*))
+                      (*depth* (1+ *depth*)))
                   (format nil
                           (formatter
                            ,(concatenate 'string "~<<" (princ-to-string ',name)
