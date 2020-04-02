@@ -56,11 +56,11 @@
   (declare (ignore noise))
   (setf stream (or stream *standard-output*))
   (pprint-logical-block (stream args)
-    (do ((key (pprint-pop) (pprint-pop))
+    (do ((key)
          (*print-escape* nil))
         (nil)
       (pprint-exit-if-list-exhausted)
-      (write key :stream stream)
+      (write (setf key (pprint-pop)) :stream stream)
       (pprint-exit-if-list-exhausted)
       (let ((v (pprint-pop)))
         (format stream "='~W'"
