@@ -188,3 +188,5 @@
              whole)))))
 
 (define-element title :attributes (list *global-attributes*))
+
+(define-element head :attributes (list *global-attributes*))
