@@ -296,7 +296,10 @@
            ,attr))
        ',name)))
 
-(define-element html :attributes (list *global-attributes* (table '(:xmlns))))
+(define-element html
+  (:attributes (list *global-attributes* (table '(:xmlns))))
+  (:require '(title)
+   :report "The <title> tag is required in all HTML documents"))
 
 (define-element title :attributes (list *global-attributes*))
 
