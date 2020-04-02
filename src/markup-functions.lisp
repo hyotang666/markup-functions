@@ -126,7 +126,7 @@
                               ',satisfies args))))))
          (lambda ()
            (signal 'element-existance :tag ',tag-name)
-           ,@(let ((valid-parents (find :valid-parents clauses :key #'car)))
+           ,@(let ((valid-parents (assoc :valid-parents clauses)))
                (when valid-parents
                  `((when (and *strict*
                               *inside-of*
@@ -137,7 +137,7 @@
                               ,(or (getf valid-parents :report)
                                    "~A tag is invalid be inside of ~S")
                               ',tag-name *inside-of*)))))
-           ,@(let ((invalid-parents (find :invalid-parents clauses :key #'car)))
+           ,@(let ((invalid-parents (assoc :invalid-parents clauses)))
                (when invalid-parents
                  `((when (and *strict*
                               *inside-of*
@@ -276,7 +276,7 @@
                                              "~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</"
                                              (princ-to-string name) ">~:>"))
                               (list attributes (indent) args (indent t)))))
-                 ,@(let ((require (find :require clauses :key #'car)))
+                 ,@(let ((require (assoc :require clauses)))
                      (when require
                        `((when (and *strict*
                                     (not
