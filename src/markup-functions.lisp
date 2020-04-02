@@ -109,7 +109,7 @@
   (check-type tag-name symbol)
   (dolist (clause clauses)
     (assert (find (car clause)
-                  '(:attributes :valid-parents :satisfies :invalid-parents))))
+                  '(:attributes :valid-parents :invalid-parents))))
   (let ((var (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        (defparameter ,var ,(cadr (assoc :attributes clauses)))
@@ -137,14 +137,15 @@
                               ,(or (getf invalid-parents :report)
                                    "~A tag is invalid be inside of ~S")
                               ',tag-name *inside-of*)))))
-           ,@(let ((satisfies (find :satisfies clauses :key #'car)))
+           ,@(let* ((attr (assoc :attributes clauses))
+                    (satisfies (getf attr :satisfies)))
                (when satisfies
                  `((when *strict*
-                     (unless (funcall ,(cadr satisfies) args)
+                     (unless (funcall ,satisfies args)
                        (funcall *strict*
-                                ,(or (getf satisfies :report)
+                                ,(or (getf attr :report)
                                      "Not satisfies constraint. ~S ~S")
-                                ',(cadr satisfies) args))))))
+                                ',satisfies args))))))
            (format nil (formatter ,(empty-tag tag-name)) (list args))))
        (define-compiler-macro ,tag-name (&whole whole &rest args)
          (when *strict*
@@ -191,10 +192,8 @@
   (:attributes
      (list
        (table '(:charset :content :http-equiv :default-style :refresh :name))
-       *global-attributes*))
-  (:valid-parents '(head)
-   :report "<meta> tags always go inside the <head> element.")
-  (:satisfies
+       *global-attributes*)
+   :satisfies
      (lambda (attributes)
        (flet ((must-pair (elt)
                 (find elt '(:name :http-equiv))))
@@ -203,7 +202,9 @@
              (notany #'must-pair attributes))))
    :report
      "The content attribute MUST be defined if the name or the http-equiv attribute is defined.~:@_~
-     If none of these are defined, the content attribute CANNOT be defined."))
+     If none of these are defined, the content attribute CANNOT be defined.")
+  (:valid-parents '(head)
+   :report "<meta> tags always go inside the <head> element."))
 
 (define-empty-element link
   (:attributes
