@@ -103,11 +103,18 @@
   (:method (stream (o float) &rest noise) (declare (ignore noise))
    (write o :stream stream)))
 
-(defmacro define-empty-element (tag-name &key attributes)
+(defmacro define-empty-element (tag-name &key attributes valid-parents)
   (check-type tag-name symbol)
   `(let ((attributes ,attributes))
      (defun ,tag-name (&rest args)
-       (lambda () (format nil (formatter ,(empty-tag tag-name)) (list args))))
+       (lambda ()
+         ,@(when valid-parents
+             `((when (and *strict*
+                          *inside-of*
+                          (not (intersection ,valid-parents *inside-of*)))
+                 (funcall *strict* "~A tag is invalid be inside of ~S"
+                          ',tag-name *inside-of*))))
+         (format nil (formatter ,(empty-tag tag-name)) (list args))))
      (define-compiler-macro ,tag-name (&whole whole &rest args)
        (when *strict*
          (do* ((args args (cddr args))
