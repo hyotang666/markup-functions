@@ -105,6 +105,18 @@
   (:method (stream (o float) &rest noise) (declare (ignore noise))
    (write o :stream stream)))
 
+(defun <inside-check> (clause name not)
+  (when clause
+    `((when (and *strict*
+                 *inside-of*
+                 ,(if not
+                      `(not (intersection ,(cadr clause) *inside-of*))
+                      `(intersection ,(cadr clause) *inside-of*)))
+        (funcall *strict*
+                 ,(or (getf clause :report)
+                      "~A tag is invalid be inside of ~S.")
+                 ',name *inside-of*)))))
+
 (defmacro define-empty-element (tag-name &body clauses)
   (check-type tag-name symbol)
   (dolist (clause clauses)
@@ -125,27 +137,8 @@
                             ',satisfies args)))))
          (lambda ()
            (signal 'element-existance :tag ',tag-name)
-           ,@(let ((valid-parents (assoc :valid-parents clauses)))
-               (when valid-parents
-                 `((when (and *strict*
-                              *inside-of*
-                              (not
-                                (intersection ,(cadr valid-parents)
-                                              *inside-of*)))
-                     (funcall *strict*
-                              ,(or (getf valid-parents :report)
-                                   "~A tag is invalid be inside of ~S")
-                              ',tag-name *inside-of*)))))
-           ,@(let ((invalid-parents (assoc :invalid-parents clauses)))
-               (when invalid-parents
-                 `((when (and *strict*
-                              *inside-of*
-                              (intersection ,(cadr invalid-parents)
-                                            *inside-of*))
-                     (funcall *strict*
-                              ,(or (getf invalid-parents :report)
-                                   "~A tag is invalid be inside of ~S")
-                              ',tag-name *inside-of*)))))
+           ,@(<inside-check> (assoc :valid-parants clauses) tag-name t)
+           ,@(<inside-check> (assoc :invalid-parents clauses) tag-name nil)
            (format nil (formatter ,(empty-tag tag-name)) (list args))))
        ,@(when (cadr (assoc :attributes clauses))
            `((define-compiler-macro ,tag-name (&whole whole &rest args)
