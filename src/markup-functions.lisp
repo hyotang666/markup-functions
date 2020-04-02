@@ -396,6 +396,16 @@
 
 (define-element b (:attributes (list *global-attributes* *event-attributes*)))
 
+(define-element table
+  (:attributes (list *global-attributes* *event-attributes*)))
+
+(define-element tr (:attributes (list *global-attributes* *event-attributes*)))
+
+(define-element td
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table<-list '(:colspan :headers :rowspan)))))
+
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) #.(string #\Newline)
                (funcall (apply #'html attributes args))))
