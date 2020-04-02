@@ -125,7 +125,8 @@
   (let ((supported-attributes (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        ,@(when (cadr (assoc :attributes clauses))
-           `((defparameter ,supported-attributes ,(cadr (assoc :attributes clauses)))))
+           `((defparameter ,supported-attributes
+               ,(cadr (assoc :attributes clauses)))))
        (defun ,tag-name (&rest args)
          ,@(let* ((attr (assoc :attributes clauses))
                   (satisfies (getf attr :satisfies)))
