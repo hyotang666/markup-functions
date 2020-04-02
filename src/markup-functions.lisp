@@ -190,6 +190,9 @@
                         (list (indent) ,args (indent t))))
              whole)))))
 
+(set-pprint-dispatch '(cons (member define-element))
+                     (pprint-dispatch '(block) nil))
+
 (define-element html :attributes (list *global-attributes* (table '(:xmlns))))
 
 (define-element title :attributes (list *global-attributes*))
