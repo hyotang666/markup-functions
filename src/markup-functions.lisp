@@ -156,6 +156,11 @@
            ,var))
        ',tag-name)))
 
+(defun pprint-clause (stream exp &rest noise)
+  (declare (ignore noise))
+  (setf stream (or stream *standard-output*))
+  (format stream "~:<~@{~W~^~2I ~:_~W~^~I ~_~}~:>" exp))
+
 (define-empty-element !doctype)
 
 (define-empty-element meta
