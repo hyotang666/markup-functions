@@ -360,8 +360,10 @@
 (define-element nav (:attributes (list *global-attributes* *event-attributes*)))
 
 (define-element header
-  :attributes
-  (list *global-attributes* *event-attributes*))
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:invalid-parents '(footer adress header)
+   :report
+     "A <header> tag cannot be placed within a <footer>, <address> or another <header> element."))
 
 (define-element main :attributes (list *global-attributes* *event-attributes*))
 
