@@ -76,7 +76,7 @@
   (defun empty-tag (tag)
     (let ((tag (princ-to-string tag)))
       (concatenate 'string "~:<<" tag
-                   " ~;~/markup-functions:pprint-attributes/~;>~:>"))))
+                   "~;~@[~/markup-functions:pprint-attributes/~]~;>~:>"))))
 
 (defvar *inside-of* nil)
 
