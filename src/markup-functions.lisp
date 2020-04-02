@@ -118,16 +118,21 @@
                  ',name *inside-of*)))))
 
 (defmacro define-empty-element (tag-name &body clauses)
+  ;; Trivial syntax check.
   (check-type tag-name symbol)
   (dolist (clause clauses)
     (assert (find (car clause)
                   '(:attributes :valid-parents :invalid-parents))))
+  ;; Bindings
   (let ((supported-attributes (intern (format nil "*~A-ATTRIBUTES*" tag-name)))
         (checker (intern (format nil "CHECK-~A-ATTRIBUTES" tag-name)))
         (attributes-specified (cadr (assoc :attributes clauses))))
+    ;; Body
     `(eval-when (:compile-toplevel :load-toplevel :execute)
+       ;; Special var.
        ,@(when attributes-specified
            `((defparameter ,supported-attributes ,attributes-specified)))
+       ;; Attributes checker.
        ,@(when attributes-specified
            `((defun ,checker (attributes)
                (when *strict*
@@ -140,9 +145,10 @@
                               (not (uiop:string-prefix-p "DATA-" key)))
                      (funcall *strict* "Unknown attributes for tag ~A: ~S"
                               ',tag-name key)))))))
+       ;; Main function.
        (defun ,tag-name (&rest args)
          ,@(when attributes-specified
-             `((,checker args)))
+             `((,checker args))) ; Runtime attributes check.
          ,@(let* ((attr (assoc :attributes clauses))
                   (satisfies (getf attr :satisfies)))
              (when satisfies
@@ -151,15 +157,18 @@
                             ,(or (getf attr :report)
                                  "Not satisfies constraint. ~S ~S")
                             ',satisfies args)))))
+         ;; Return value closure.
          (lambda ()
            (signal 'element-existance :tag ',tag-name)
            ,@(<inside-check> (assoc :valid-parants clauses) tag-name t)
            ,@(<inside-check> (assoc :invalid-parents clauses) tag-name nil)
            (format nil (formatter ,(empty-tag tag-name)) (list args))))
+       ;; Compile time attribute checker.
        ,@(when attributes-specified
            `((define-compiler-macro ,tag-name (&whole whole &rest args)
                (,checker args)
                whole)))
+       ;; Describe.
        (defmethod list-all-attributes ((s (eql ',tag-name)))
          ,(when attributes-specified
             `(mapcan
