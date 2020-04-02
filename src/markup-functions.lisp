@@ -365,7 +365,11 @@
    :report
      "A <header> tag cannot be placed within a <footer>, <address> or another <header> element."))
 
-(define-element main :attributes (list *global-attributes* *event-attributes*))
+(define-element main
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:invalid-parents '(article aside footer header nav)
+   :report
+     "The <main> element must NOT be a descendant of an <article>, <aside>, <footer>, <header>, or <nav> element."))
 
 (define-element form
   :attributes
