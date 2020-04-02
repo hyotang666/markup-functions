@@ -9,18 +9,18 @@
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defparameter *strict* 'error)
   (declaim (type (member error warn nil) *strict*))
-  (defun table (list)
+  (defun table<-list (list)
     (let ((ht (make-hash-table :test #'eq)))
       (mapc (lambda (elt) (setf (gethash elt ht) elt)) list)
       ht))
   (defparameter *global-attributes*
-    (table
+    (table<-list
       '(:accesskey :class :contenteditable :dir :draggable :dropzone :hidden
         :id :lang :spellcheck :style :tabindex :title :translate
         ;; :data-*
         )))
   (defparameter *event-attributes*
-    (table
+    (table<-list
       '(
         ;; Window events.
         :onafterprint :onbeforeprint :onbeforeunload :onerror :onhashchange
@@ -195,7 +195,8 @@
 (define-empty-element meta
   (:attributes
      (list
-       (table '(:charset :content :http-equiv :default-style :refresh :name))
+       (table<-list
+         '(:charset :content :http-equiv :default-style :refresh :name))
        *global-attributes*)
    :satisfies
      (lambda (attributes)
@@ -213,7 +214,7 @@
 (define-empty-element link
   (:attributes
      (list *global-attributes* *event-attributes*
-           (table
+           (table<-list
              '(:crossorigin :href :hreflang :media :referrerpolicy :rel :sizes
                :title :type))))
   (:valid-parents '(head)
@@ -223,7 +224,7 @@
 (define-empty-element input
   (:attributes
      (list *global-attributes* *event-attributes*
-           (table
+           (table<-list
              '(:accept :alt :autocomplete :autofocus :checked :dirname
                :disabled :form :formaction :formenctype :formmethod
                :formnovalidate :formtarget :height :list :max :maxlength :min
@@ -321,7 +322,7 @@
        ',name)))
 
 (define-element html
-  (:attributes (list *global-attributes* (table '(:xmlns))))
+  (:attributes (list *global-attributes* (table<-list '(:xmlns))))
   (:require '(title)
    :report "The <title> tag is required in all HTML documents"))
 
@@ -352,7 +353,7 @@
 (define-element a
   (:attributes
      (list *global-attributes* *event-attributes*
-           (table
+           (table<-list
              '(:type :target :rel :referrerpolicy :ping :media :hreflang :href
                :download)))
    :satisfies
@@ -382,13 +383,13 @@
 (define-element form
   (:attributes
      (list *global-attributes* *event-attributes*
-           (table
+           (table<-list
              '(:accept-charset :action :autocomplete :enctype :method :name
                :novalidate :target)))))
 
 (define-element label
   (:attributes
-     (list *global-attributes* *event-attributes* (table '(:for :form)))))
+     (list *global-attributes* *event-attributes* (table<-list '(:for :form)))))
 
 (define-element b (:attributes (list *global-attributes* *event-attributes*)))
 
