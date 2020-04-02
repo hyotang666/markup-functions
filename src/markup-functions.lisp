@@ -105,25 +105,34 @@
   (:method (stream (o float) &rest noise) (declare (ignore noise))
    (write o :stream stream)))
 
-(defmacro define-empty-element
-          (tag-name &key attributes valid-parents satisfies)
+(defmacro define-empty-element (tag-name &body clauses)
   (check-type tag-name symbol)
+  (dolist (clause clauses)
+    (assert (find (car clause) '(:attributes :valid-parents :satisfies))))
   (let ((var (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
-       (defparameter ,var ,attributes)
+       (defparameter ,var ,(cadr (assoc :attributes clauses)))
        (defun ,tag-name (&rest args)
          (lambda ()
-           ,@(when valid-parents
-               `((when (and *strict*
-                            *inside-of*
-                            (not (intersection ,valid-parents *inside-of*)))
-                   (funcall *strict* "~A tag is invalid be inside of ~S"
-                            ',tag-name *inside-of*))))
-           ,@(when satisfies
-               `((when *strict*
-                   (unless (funcall ,satisfies args)
-                     (error "Not satisfies constraint. ~S ~S" ',satisfies
-                            args)))))
+           ,@(let ((valid-parents (find :valid-parents clauses :key #'car)))
+               (when valid-parents
+                 `((when (and *strict*
+                              *inside-of*
+                              (not
+                                (intersection ,(cadr valid-parents)
+                                              *inside-of*)))
+                     (funcall *strict*
+                              ,(or (getf valid-parents :report)
+                                   "~A tag is invalid be inside of ~S")
+                              ',tag-name *inside-of*)))))
+           ,@(let ((satisfies (find :satisfies clauses :key #'car)))
+               (when satisfies
+                 `((when *strict*
+                     (unless (funcall ,(cadr satisfies) args)
+                       (funcall *strict*
+                                ,(or (getf satisfies :report)
+                                     "Not satisfies constraint. ~S ~S")
+                                ',(cadr satisfies) args))))))
            (format nil (formatter ,(empty-tag tag-name)) (list args))))
        (define-compiler-macro ,tag-name (&whole whole &rest args)
          (when *strict*
@@ -147,41 +156,41 @@
            ,var))
        ',tag-name)))
 
-(set-pprint-dispatch '(cons (member define-empty-element))
-                     (pprint-dispatch '(block) nil))
-
 (define-empty-element !doctype)
 
 (define-empty-element meta
-  :attributes
-  (list (table '(:charset :content :http-equiv :default-style :refresh :name))
-        *global-attributes*)
-  :valid-parents
-  '(head)
-  :satisfies
-  (lambda (attributes)
-    (flet ((must-pair (elt)
-             (find elt '(:name :http-equiv))))
-      (if (getf attributes :content)
-          (some #'must-pair attributes)
-          (notany #'must-pair attributes)))))
+  (:attributes
+   (list (table '(:charset :content :http-equiv :default-style :refresh :name))
+         *global-attributes*))
+  (:valid-parents '(head) :report
+   "<meta> tags always go inside the <head> element.")
+  (:satisfies
+   (lambda (attributes)
+     (flet ((must-pair (elt)
+              (find elt '(:name :http-equiv))))
+       (if (getf attributes :content)
+           (some #'must-pair attributes)
+           (notany #'must-pair attributes))))
+   :report
+   "The content attribute MUST be defined if the name or the http-equiv attribute is defined.~:@_~
+    If none of these are defined, the content attribute CANNOT be defined."))
 
 (define-empty-element link
-  :attributes
-  (list *global-attributes* *event-attributes*
-        (table
-          '(:crossorigin :href :hreflang :media :referrerpolicy :rel :sizes
-            :title :type))))
+  (:attributes
+   (list *global-attributes* *event-attributes*
+         (table
+           '(:crossorigin :href :hreflang :media :referrerpolicy :rel :sizes
+             :title :type)))))
 
 (define-empty-element input
-  :attributes
-  (list *global-attributes* *event-attributes*
-        (table
-          '(:accept :alt :autocomplete :autofocus :checked :dirname :disabled
-            :form :formaction :formenctype :formmethod :formnovalidate
-            :formtarget :height :list :max :maxlength :min :minlength :multiple
-            :name :pattern :placeholder :readonly :required :size :src :step
-            :type :value :width))))
+  (:attributes
+   (list *global-attributes* *event-attributes*
+         (table
+           '(:accept :alt :autocomplete :autofocus :checked :dirname :disabled
+             :form :formaction :formenctype :formmethod :formnovalidate
+             :formtarget :height :list :max :maxlength :min :minlength
+             :multiple :name :pattern :placeholder :readonly :required :size
+             :src :step :type :value :width)))))
 
 (defmacro define-element (name &key attributes)
   (check-type name symbol)
