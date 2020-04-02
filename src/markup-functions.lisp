@@ -123,12 +123,12 @@
     (assert (find (car clause)
                   '(:attributes :valid-parents :invalid-parents))))
   (let ((supported-attributes (intern (format nil "*~A-ATTRIBUTES*" tag-name)))
-        (checker (intern (format nil "CHECK-~A-ATTRIBUTES" tag-name))))
+        (checker (intern (format nil "CHECK-~A-ATTRIBUTES" tag-name)))
+        (attributes-specified (cadr (assoc :attributes clauses))))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
-       ,@(when (cadr (assoc :attributes clauses))
-           `((defparameter ,supported-attributes
-               ,(cadr (assoc :attributes clauses)))))
-       ,@(when (cadr (assoc :attributes clauses))
+       ,@(when attributes-specified
+           `((defparameter ,supported-attributes ,attributes-specified)))
+       ,@(when attributes-specified
            `((defun ,checker (attributes)
                (when *strict*
                  (do* ((rest attributes (cddr rest))
@@ -141,7 +141,7 @@
                      (funcall *strict* "Unknown attributes for tag ~A: ~S"
                               ',tag-name key)))))))
        (defun ,tag-name (&rest args)
-         ,@(when (cadr (assoc :attributes clauses))
+         ,@(when attributes-specified
              `((,checker args)))
          ,@(let* ((attr (assoc :attributes clauses))
                   (satisfies (getf attr :satisfies)))
@@ -156,12 +156,12 @@
            ,@(<inside-check> (assoc :valid-parants clauses) tag-name t)
            ,@(<inside-check> (assoc :invalid-parents clauses) tag-name nil)
            (format nil (formatter ,(empty-tag tag-name)) (list args))))
-       ,@(when (cadr (assoc :attributes clauses))
+       ,@(when attributes-specified
            `((define-compiler-macro ,tag-name (&whole whole &rest args)
                (,checker args)
                whole)))
        (defmethod list-all-attributes ((s (eql ',tag-name)))
-         ,(when (cadr (assoc :attributes clauses))
+         ,(when attributes-specified
             `(mapcan
                (lambda (table)
                  (loop :for key :being :each :hash-key :of table
