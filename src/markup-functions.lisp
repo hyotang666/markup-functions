@@ -118,8 +118,8 @@
                       (or (not (supportedp key attributes))
                           (not (uiop:string-prefix-p "DATA-" key))))
              (funcall *strict*
-                      ,(concatenate 'string "Unknown attributes for "
-                                    (princ-to-string tag-name) " tag: ~S")
+                      ,(concatenate 'string "Unknown attributes for tag "
+                                    (princ-to-string tag-name) ": ~S")
                       key))))
        whole)))
 
@@ -173,8 +173,8 @@
                         (or (not (supportedp key ,attr))
                             (not (uiop:string-prefix-p "DATA-" key))))
                (funcall *strict*
-                        ,(concatenate 'string "Unknown attributes for "
-                                      (princ-to-string name) " tag: ~S")
+                        ,(concatenate 'string "Unknown attributes for tag "
+                                      (princ-to-string name) ": ~S")
                         key))))
          (if (constantp attributes)
              `(lambda ()
