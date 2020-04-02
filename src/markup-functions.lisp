@@ -236,6 +236,13 @@
     `(let ((,attr ,(cadr (assoc :attributes clauses))))
        (defun ,name (attributes &rest args)
          (lambda ()
+           ,@(let* ((attr (assoc :attributes clauses))
+                    (satisfies (getf attr :satisfies)))
+               (when satisfies
+                 `((when (and *strict* (not (funcall ,satisfies attributes)))
+                     (funcall *strict*
+                              ,(or (getf attr :report) "Not satisfies ~S. ~S")
+                              ',satisfies attributes)))))
            (let ((*inside-of* (cons ',name *inside-of*)) elements)
              (handler-bind ((element-existance
                              (lambda (condition)
