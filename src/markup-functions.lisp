@@ -372,11 +372,11 @@
      "The <main> element must NOT be a descendant of an <article>, <aside>, <footer>, <header>, or <nav> element."))
 
 (define-element form
-  :attributes
-  (list *global-attributes* *event-attributes*
-        (table
-          '(:accept-charset :action :autocomplete :enctype :method :name
-            :novalidate :target))))
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table
+             '(:accept-charset :action :autocomplete :enctype :method :name
+               :novalidate :target)))))
 
 (define-element label
   :attributes
