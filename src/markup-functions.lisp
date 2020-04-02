@@ -228,20 +228,37 @@
 (define-condition element-existance ()
   ((tag :initarg :tag :reader existance-tag)))
 
-(defmacro define-element (name &key attributes)
+(defmacro define-element (name &body clauses)
   (check-type name symbol)
+  (dolist (clause clauses)
+    (assert (find (car clause) '(:attributes :require))))
   (let ((attr (gensym "ATTRIBUTES")))
-    `(let ((,attr ,attributes))
+    `(let ((,attr ,(cadr (assoc :attributes clauses))))
        (defun ,name (attributes &rest args)
          (lambda ()
-           (let ((*inside-of* (cons ',name *inside-of*)))
-             (format nil
-                     (formatter
-                      ,(concatenate 'string "~<<" (princ-to-string name)
-                                    "~@[ ~/markup-functions:pprint-attributes/~]>"
-                                    "~VI~_~{~/markup-functions:pprint-put/~}~VI~_</"
-                                    (princ-to-string name) ">~:>"))
-                     (list attributes (indent) args (indent t))))))
+           (let ((*inside-of* (cons ',name *inside-of*)) elements)
+             (handler-bind ((element-existance
+                             (lambda (condition)
+                               (push (existance-tag condition) elements))))
+               (let ((result
+                      (format nil
+                              (formatter
+                               ,(concatenate 'string "~<<"
+                                             (princ-to-string name)
+                                             "~@[ ~/markup-functions:pprint-attributes/~]>"
+                                             "~VI~_~{~/markup-functions:pprint-put/~}~VI~_</"
+                                             (princ-to-string name) ">~:>"))
+                              (list attributes (indent) args (indent t)))))
+                 ,@(let ((require (find :require clauses :key #'car)))
+                     (when require
+                       `((when (and *strict*
+                                    (not
+                                      (intersection result ,(cadr require))))
+                           (funcall *strict*
+                                    ,(or (getf require :report)
+                                         "Missing required elements. ~S")
+                                    ',(cadr require))))))
+                 result)))))
        (define-compiler-macro ,name (&whole whole attributes &rest args)
          (when (and *strict* (constantp attributes))
            (do* ((rest (eval attributes) (cddr rest))
