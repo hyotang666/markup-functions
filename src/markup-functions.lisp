@@ -105,7 +105,8 @@
   (:method (stream (o float) &rest noise) (declare (ignore noise))
    (write o :stream stream)))
 
-(defmacro define-empty-element (tag-name &key attributes valid-parents)
+(defmacro define-empty-element
+          (tag-name &key attributes valid-parents satisfies)
   (check-type tag-name symbol)
   (let ((var (intern (format nil "*~A-ATTRIBUTES*" tag-name))))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
@@ -118,6 +119,11 @@
                             (not (intersection ,valid-parents *inside-of*)))
                    (funcall *strict* "~A tag is invalid be inside of ~S"
                             ',tag-name *inside-of*))))
+           ,@(when satisfies
+               `((when *strict*
+                   (unless (funcall ,satisfies args)
+                     (error "Not satisfies constraint. ~S ~S" ',satisfies
+                            args)))))
            (format nil (formatter ,(empty-tag tag-name)) (list args))))
        (define-compiler-macro ,tag-name (&whole whole &rest args)
          (when *strict*
@@ -151,7 +157,14 @@
   (list (table '(:charset :content :http-equiv :default-style :refresh :name))
         *global-attributes*)
   :valid-parents
-  '(head))
+  '(head)
+  :satisfies
+  (lambda (attributes)
+    (flet ((must-pair (elt)
+             (find elt '(:name :http-equiv))))
+      (if (getf attributes :content)
+          (some #'must-pair attributes)
+          (notany #'must-pair attributes)))))
 
 (define-empty-element link
   :attributes
