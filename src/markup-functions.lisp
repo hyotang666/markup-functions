@@ -71,17 +71,6 @@
         (write-char #\Space stream)
         (pprint-newline :miser stream)))))
 
-(defun tag (attributes tag)
-  (let ((tag (princ-to-string tag)))
-    (concatenate 'string "~<<" tag
-                 (let ((attributes
-                        (with-output-to-string (s)
-                          (pprint-attributes s attributes))))
-                   (if (string= "" attributes)
-                       attributes
-                       (concatenate 'string " " attributes)))
-                 ">~VI~_~{~/markup-functions:pprint-put/~}~VI~_</" tag ">~:>")))
-
 (defun empty-tag (tag)
   (let ((tag (princ-to-string tag)))
     (concatenate 'string "~:<<" tag
