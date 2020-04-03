@@ -127,6 +127,18 @@
                           "Not satisfies constraint. ~S ~S")
                      ',satisfies ,attributes)))))))
 
+(defun <attributes-checker> (fun-name supported-attributes tag-name)
+  `((defun ,fun-name (attributes)
+      (when *strict*
+        (do* ((rest attributes (cddr rest))
+              (key (car rest) (car rest)))
+             ((null rest))
+          (when (and (keywordp key)
+                     (not (supportedp key ,supported-attributes))
+                     (not (uiop:string-prefix-p "DATA-" key)))
+            (funcall *strict* "Unknown attributes for tag ~A: ~S" ',tag-name
+                     key)))))))
+
 (defmacro define-empty-element (tag-name &body clauses)
   ;; Trivial syntax check.
   (check-type tag-name symbol)
@@ -144,16 +156,7 @@
            `((defparameter ,supported-attributes ,attributes-specified)))
        ;; Attributes checker.
        ,@(when attributes-specified
-           `((defun ,checker (attributes)
-               (when *strict*
-                 (do* ((rest attributes (cddr rest))
-                       (key (car rest) (car rest)))
-                      ((null rest))
-                   (when (and (keywordp key)
-                              (not (supportedp key ,supported-attributes))
-                              (not (uiop:string-prefix-p "DATA-" key)))
-                     (funcall *strict* "Unknown attributes for tag ~A: ~S"
-                              ',tag-name key)))))))
+           (<attributes-checker> checker supported-attributes tag-name))
        ;; Main function.
        (defun ,tag-name (&rest args)
          ,@(when attributes-specified
