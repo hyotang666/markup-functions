@@ -253,9 +253,9 @@
   (dolist (clause clauses)
     (assert (find (car clause) '(:attributes :require :invalid-parents))))
   ;; Bind
-  (let ((attr (gensym "ATTRIBUTES")))
+  (let ((supported-attributes (gensym "ATTRIBUTES")))
     ;; Body
-    `(let ((,attr ,(cadr (assoc :attributes clauses))))
+    `(let ((,supported-attributes ,(cadr (assoc :attributes clauses))))
        ;; Main function.
        (defun ,name (attributes &rest args)
          ,@(<satisfies-check> (assoc :attributes clauses) 'attributes)
@@ -297,7 +297,7 @@
                  (key (car rest) (car rest)))
                 ((null rest))
              (when (and (keywordp key)
-                        (or (not (supportedp key ,attr))
+                        (or (not (supportedp key ,supported-attributes))
                             (not (uiop:string-prefix-p "DATA-" key))))
                (funcall *strict*
                         ,(concatenate 'string "Unknown attributes for tag "
@@ -327,7 +327,7 @@
            (lambda (table)
              (loop :for key :being :each :hash-key :of table
                    :collect key))
-           ,attr))
+           ,supported-attributes))
        ',name)))
 
 (define-element html
