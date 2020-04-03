@@ -8,16 +8,23 @@
 
 (let* ((main-functions '(html5))
        (standard-elements
-        '(html title head body footer h1 h2 h3 h4 h5 h6 p a div nav header main
-               form label b table tr td))
+        '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
+          header main form label b table tr td))
        (empty-elements '(!doctype meta link input br))
        (config '(*indent* *strict* *print-case* *print-pretty*))
        (dev-tools '(list-all-attributes))
-       (all (append main-functions standard-elements empty-elements config dev-tools)))
+       (all
+        (append main-functions (cdr standard-elements) empty-elements config
+                dev-tools)))
   (unless (find-package :htmf)
     (make-package :htmf :use nil))
   (import all :htmf)
-  (export all :htmf))
+  (export all :htmf)
+  (defun pprint-element (stream exp)
+    (setf stream (or stream *standard-output*))
+    (format stream "~:<~W~^ ~:S~^~1I ~_~@{~W~^ ~_~}~:>" exp))
+  (set-pprint-dispatch `(cons (member ,@(cdr standard-elements)))
+                       'pprint-element))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defparameter *strict* 'error)
