@@ -257,15 +257,7 @@
                             ,(or (getf attr :report) "Not satisfies ~S. ~S")
                             ',satisfies attributes)))))
          (lambda ()
-           ,@(let ((invalids (assoc :invalid-parents clauses)))
-               (when invalids
-                 `((when (and *strict*
-                              (intersection ,(getf invalids :invalid-parents)
-                                            *inside-of*))
-                     (funcall *strict*
-                              ,(or (getf invalids :report)
-                                   "~S could not inside of ~S")
-                              ',name *inside-of*)))))
+           ,@(<inside-check> (assoc :invalid-parents clauses) name nil)
            (let ((*inside-of* (cons ',name *inside-of*))
                  elements
                  (*depth* (1+ *depth*)))
