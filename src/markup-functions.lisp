@@ -484,3 +484,6 @@ invalid-parents-form := S-expression which generates list which have tag symbols
             (map 'list #'plump:text
                  (clss:select "#table1 td:first-child"
                               (plump:parse (dex:get url)))))))
+
+#++
+(defun cme (form) (funcall (compiler-macro-function (car form)) form nil))
