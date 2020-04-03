@@ -117,6 +117,16 @@
                       "~A tag is invalid be inside of ~S.")
                  ',name *inside-of*)))))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun <satisfies-check> (clause attributes)
+    (let ((satisfies (getf clause :satisfies)))
+      (when satisfies
+        `((when (and *strict* (not (funcall ,satisfies ,attributes)))
+            (funcall *strict*
+                     ,(or (getf clause :report)
+                          "Not satisfies constraint. ~S ~S")
+                     ',satisfies ,attributes)))))))
+
 (defmacro define-empty-element (tag-name &body clauses)
   ;; Trivial syntax check.
   (check-type tag-name symbol)
@@ -149,14 +159,7 @@
        (defun ,tag-name (&rest args)
          ,@(when attributes-specified
              `((,checker args))) ; Runtime attributes check.
-         ,@(let* ((attr (assoc :attributes clauses))
-                  (satisfies (getf attr :satisfies)))
-             (when satisfies
-               `((when (and *strict* (not (funcall ,satisfies args)))
-                   (funcall *strict*
-                            ,(or (getf attr :report)
-                                 "Not satisfies constraint. ~S ~S")
-                            ',satisfies args)))))
+         ,@(<satisfies-check> (assoc :attributes clauses) 'args)
          ;; Return value closure.
          (lambda ()
            (signal 'element-existance :tag ',tag-name)
