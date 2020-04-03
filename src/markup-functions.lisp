@@ -183,13 +183,14 @@
 (defun pprint-clause (stream exp &rest noise)
   (declare (ignore noise))
   (setf stream (or stream *standard-output*))
-  (format stream "~:<~@{~W~^~2I ~:_~W~^~I ~_~}~:>" exp))
+  (funcall (formatter "~:<~@{~W~^~2I ~:_~W~^~I ~_~}~:>") stream exp))
 
 (defun pprint-define-empty-element (stream exp)
   (setf stream (or stream *standard-output*))
-  (format stream
-          "~:<~W~^~3I ~@_~1I~W~^ ~_~@{~/markup-functions:pprint-clause/~^ ~:_~}~:>"
-          exp))
+  (funcall
+    (formatter
+     "~:<~W~^~3I ~@_~1I~W~^ ~_~@{~/markup-functions:pprint-clause/~^ ~:_~}~:>")
+    stream exp))
 
 (set-pprint-dispatch '(cons (member define-empty-element define-element))
                      'pprint-define-empty-element)
