@@ -6,6 +6,19 @@
 
 (in-package :markup-functions)
 
+(let* ((main-functions '(html5))
+       (standard-elements
+        '(html title head body footer h1 h2 h3 h4 h5 h6 p a div nav header main
+               form label b table tr td))
+       (empty-elements '(!doctype meta link input br))
+       (config '(*indent* *strict* *print-case* *print-pretty*))
+       (dev-tools '(list-all-attributes))
+       (all (append main-functions standard-elements empty-elements config dev-tools)))
+  (unless (find-package :htmf)
+    (make-package :htmf :use nil))
+  (import all :htmf)
+  (export all :htmf))
+
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defparameter *strict* 'error)
   (declaim (type (member error warn nil) *strict*))
