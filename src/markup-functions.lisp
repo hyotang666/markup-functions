@@ -107,7 +107,7 @@
 
 (defgeneric pprint-put
     (stream thing &rest noise)
-  (:method (stream (o null) &rest noise) (declare (ignore noise))
+  (:method (stream (o null) &rest noise) (declare (ignore stream noise))
    ;; do nothing
    nil)
   (:method (stream (o string) &rest noise) (declare (ignore noise))
