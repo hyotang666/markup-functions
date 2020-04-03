@@ -72,12 +72,6 @@
         (write-char #\Space stream)
         (pprint-newline :fill stream)))))
 
-(eval-when (:load-toplevel :compile-toplevel :execute)
-  (defun empty-tag (tag)
-    (let ((tag (princ-to-string tag)))
-      (concatenate 'string "~:<<" tag
-                   "~;~@[~/markup-functions:pprint-attributes/~]~;>~:>"))))
-
 (defvar *inside-of* nil)
 
 (defvar *depth* 0)
@@ -167,7 +161,10 @@
            (signal 'element-existance :tag ',tag-name)
            ,@(<inside-check> (assoc :valid-parants clauses) tag-name t)
            ,@(<inside-check> (assoc :invalid-parents clauses) tag-name nil)
-           (format nil (formatter ,(empty-tag tag-name)) (list args))))
+           (format nil
+                   (formatter
+                    "~<<~W~@[ ~:I~@_~/markup-functions:pprint-attributes/~]>~:>")
+                   (list ',tag-name args))))
        ;; Compile time attribute checker.
        ,@(when attributes-specified
            `((define-compiler-macro ,tag-name (&whole whole &rest args)
