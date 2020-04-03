@@ -245,13 +245,18 @@
   ((tag :initarg :tag :reader existance-tag)))
 
 (defmacro define-element (name &body clauses)
+  ;; Trivial syntax check.
   (check-type name symbol)
   (dolist (clause clauses)
     (assert (find (car clause) '(:attributes :require :invalid-parents))))
+  ;; Bind
   (let ((attr (gensym "ATTRIBUTES")))
+    ;; Body
     `(let ((,attr ,(cadr (assoc :attributes clauses))))
+       ;; Main function.
        (defun ,name (attributes &rest args)
          ,@(<satisfies-check> (assoc :attributes clauses) 'attributes)
+         ;; Return value closure
          (lambda ()
            ,@(<inside-check> (assoc :invalid-parents clauses) name nil)
            (let ((*inside-of* (cons ',name *inside-of*))
@@ -279,6 +284,7 @@
                                          "Missing required elements. ~S")
                                     ',(cadr require))))))
                  result)))))
+       ;; Compile time attributes check.
        (define-compiler-macro ,name (&whole whole attributes &rest args)
          (when (and *strict* (constantp attributes))
            (do* ((rest (eval attributes) (cddr rest))
@@ -309,6 +315,7 @@
                                          (princ-to-string ',name) ">~:>"))
                           (list (indent) (list ,@args) (indent t)))))
              whole))
+       ;; Describe
        (defmethod list-all-attributes ((o (eql ',name)))
          (mapcan
            (lambda (table)
