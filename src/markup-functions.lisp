@@ -474,7 +474,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
            (table<-list '(:colspan :headers :rowspan)))))
 
 (defun html5 (attributes &rest args)
-  (concatenate 'string (funcall (!doctype :html)) #.(string #\Newline)
+  (concatenate 'string (funcall (!doctype :html)) (format nil "~:@_")
                (funcall (apply #'html attributes args))))
 
 #++
