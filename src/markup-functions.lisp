@@ -208,7 +208,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
            ,@(<inside-check> (assoc :invalid-parents clauses) tag-name nil)
            (format nil
                    (formatter
-                    "~<<~W~@[ ~:I~@_~/markup-functions:pprint-attributes/~]>~:>")
+                    "~<<~A~@[ ~:I~@_~/markup-functions:pprint-attributes/~]>~:>")
                    (list ',tag-name args))))
        ;; Compile time attribute checker.
        ,@(when attributes-specified
@@ -304,14 +304,14 @@ invalid-parents-form := S-expression which generates list which have tag symbols
 
 (defun <tag-formatter> (attributes)
   `(formatter
-    ,(concatenate 'string "~<<~W"
+    ,(concatenate 'string "~<<~A"
                   (if (null attributes)
                       "~@[ ~/markup-functions:pprint-attributes/~]"
                       (with-output-to-string (s)
                         (write-char #\Space s)
                         (pprint-attributes s attributes)
                         (write-string "~*" s)))
-                  ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>")))
+                  ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~A>~:>")))
 
 #| BNF
 (define-element tag-name &body clause+)
