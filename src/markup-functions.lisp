@@ -253,11 +253,17 @@
   (dolist (clause clauses)
     (assert (find (car clause) '(:attributes :require :invalid-parents))))
   ;; Bind
-  (let ((supported-attributes (gensym "ATTRIBUTES")))
+  (let ((supported-attributes (gensym "ATTRIBUTES"))
+        (checker (intern (format nil "CHECK-~A-ATTRIBUTES" name))))
     ;; Body
     `(let ((,supported-attributes ,(cadr (assoc :attributes clauses))))
+       ;; Attributes checker
+       (when ,supported-attributes
+         ,(car (<attributes-checker> checker supported-attributes name)))
        ;; Main function.
        (defun ,name (attributes &rest args)
+         (when ,supported-attributes
+           (,checker attributes))
          ,@(<satisfies-check> (assoc :attributes clauses) 'attributes)
          ;; Return value closure
          (lambda ()
@@ -292,17 +298,8 @@
                            result))))))))
        ;; Compile time attributes check.
        (define-compiler-macro ,name (&whole whole attributes &rest args)
-         (when (and *strict* (constantp attributes))
-           (do* ((rest (eval attributes) (cddr rest))
-                 (key (car rest) (car rest)))
-                ((null rest))
-             (when (and (keywordp key)
-                        (or (not (supportedp key ,supported-attributes))
-                            (not (uiop:string-prefix-p "DATA-" key))))
-               (funcall *strict*
-                        ,(concatenate 'string "Unknown attributes for tag "
-                                      (princ-to-string name) ": ~S")
-                        key))))
+         (when (constantp attributes)
+           (,checker (eval attributes)))
          (if (constantp attributes)
              `(lambda ()
                 (let ((*inside-of* (cons ',',name *inside-of*))
