@@ -247,6 +247,18 @@
 (define-condition element-existance ()
   ((tag :initarg :tag :reader existance-tag)))
 
+(defun <require-check> (body clause)
+  `(let (elements)
+     (handler-bind ((element-existance
+                     (lambda (condition)
+                       (push (existance-tag condition) elements))))
+       (let ((result ,body))
+         (when (and *strict* (not (intersection elements ,(cadr clause))))
+           (funcall *strict*
+                    ,(or (getf clause :report) "Missing required elements. ~S")
+                    ',(cadr clause)))
+         result))))
+
 (defmacro define-element (name &body clauses)
   ;; Trivial syntax check.
   (check-type name symbol)
@@ -279,23 +291,9 @@
                                              "~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</"
                                              (princ-to-string name) ">~:>"))
                               (list attributes (indent) args (indent t)))))
-                (if (not require)
-                    body
-                    `(let (elements)
-                       (handler-bind ((element-existance
-                                       (lambda (condition)
-                                         (push (existance-tag condition)
-                                               elements))))
-                         (let ((result ,body))
-                           (when (and *strict*
-                                      (not
-                                        (intersection elements
-                                                      ,(cadr require))))
-                             (funcall *strict*
-                                      ,(or (getf require :report)
-                                           "Missing required elements. ~S")
-                                      ',(cadr require)))
-                           result))))))))
+                (if require
+                    (<require-check> body require)
+                    body)))))
        ;; Compile time attributes check.
        (define-compiler-macro ,name (&whole whole attributes &rest args)
          (when (constantp attributes)
