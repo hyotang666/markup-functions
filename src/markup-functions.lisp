@@ -306,11 +306,12 @@ invalid-parents-form := S-expression which generates list which have tag symbols
   `(formatter
     ,(concatenate 'string "~<<~W"
                   (if (null attributes)
-                      "~@[ ~/markup-functions:pprint-attributes/~]>"
+                      "~@[ ~/markup-functions:pprint-attributes/~]"
                       (with-output-to-string (s)
                         (write-char #\Space s)
-                        (pprint-attributes s attributes)))
-                  "~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>")))
+                        (pprint-attributes s attributes)
+                        (write-string "~*" s)))
+                  ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>")))
 
 #| BNF
 (define-element tag-name &body clause+)
@@ -376,7 +377,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
                 (let ((*inside-of* (cons ',',name *inside-of*))
                       (*depth* (1+ *depth*)))
                   (format nil ,(<tag-formatter> (eval attributes))
-                          (list ',',name (indent) (list ,@args) (indent t)
+                          (list ',',name nil (indent) (list ,@args) (indent t)
                                 ',',name))))
              whole))
        ;; Describe
