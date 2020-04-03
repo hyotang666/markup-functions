@@ -119,19 +119,18 @@
   (:method (stream (o float) &rest noise) (declare (ignore noise))
    (write o :stream stream)))
 
-(defun <inside-check> (clause name not)
-  (when clause
-    `((when (and *strict*
-                 *inside-of*
-                 ,(if not
-                      `(not (intersection ,(cadr clause) *inside-of*))
-                      `(intersection ,(cadr clause) *inside-of*)))
-        (funcall *strict*
-                 ,(or (getf clause :report)
-                      "~A tag is invalid be inside of ~S.")
-                 ',name *inside-of*)))))
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun <inside-check> (clause name not)
+    (when clause
+      `((when (and *strict*
+                   *inside-of*
+                   ,(if not
+                        `(not (intersection ,(cadr clause) *inside-of*))
+                        `(intersection ,(cadr clause) *inside-of*)))
+          (funcall *strict*
+                   ,(or (getf clause :report)
+                        "~A tag is invalid be inside of ~S.")
+                   ',name *inside-of*)))))
   (defun <satisfies-check> (clause attributes)
     (let ((satisfies (getf clause :satisfies)))
       (when satisfies
@@ -139,19 +138,18 @@
             (funcall *strict*
                      ,(or (getf clause :report)
                           "Not satisfies constraint. ~S ~S")
-                     ',satisfies ,attributes)))))))
-
-(defun <attributes-checker> (fun-name supported-attributes tag-name)
-  `((defun ,fun-name (attributes)
-      (when *strict*
-        (do* ((rest attributes (cddr rest))
-              (key (car rest) (car rest)))
-             ((null rest))
-          (when (and (keywordp key)
-                     (not (supportedp key ,supported-attributes))
-                     (not (uiop:string-prefix-p "DATA-" key)))
-            (funcall *strict* "Unknown attributes for tag ~A: ~S" ',tag-name
-                     key)))))))
+                     ',satisfies ,attributes))))))
+  (defun <attributes-checker> (fun-name supported-attributes tag-name)
+    `((defun ,fun-name (attributes)
+        (when *strict*
+          (do* ((rest attributes (cddr rest))
+                (key (car rest) (car rest)))
+               ((null rest))
+            (when (and (keywordp key)
+                       (not (supportedp key ,supported-attributes))
+                       (not (uiop:string-prefix-p "DATA-" key)))
+              (funcall *strict* "Unknown attributes for tag ~A: ~S" ',tag-name
+                       key))))))))
 
 #| BNF
 (define-empty-element tag-name &body clause+)
@@ -290,28 +288,29 @@ invalid-parents-form := S-expression which generates list which have tag symbols
 (define-condition element-existance ()
   ((tag :initarg :tag :reader existance-tag)))
 
-(defun <require-check> (body clause)
-  `(let (elements)
-     (handler-bind ((element-existance
-                     (lambda (condition)
-                       (push (existance-tag condition) elements))))
-       (let ((result ,body))
-         (when (and *strict* (not (intersection elements ,(cadr clause))))
-           (funcall *strict*
-                    ,(or (getf clause :report) "Missing required elements. ~S")
-                    ',(cadr clause)))
-         result))))
-
-(defun <tag-formatter> (attributes)
-  `(formatter
-    ,(concatenate 'string "~<<~A"
-                  (if (null attributes)
-                      "~@[ ~/markup-functions:pprint-attributes/~]"
-                      (with-output-to-string (s)
-                        (write-char #\Space s)
-                        (pprint-attributes s attributes)
-                        (write-string "~*" s)))
-                  ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~A>~:>")))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun <require-check> (body clause)
+    `(let (elements)
+       (handler-bind ((element-existance
+                       (lambda (condition)
+                         (push (existance-tag condition) elements))))
+         (let ((result ,body))
+           (when (and *strict* (not (intersection elements ,(cadr clause))))
+             (funcall *strict*
+                      ,(or (getf clause :report)
+                           "Missing required elements. ~S")
+                      ',(cadr clause)))
+           result))))
+  (defun <tag-formatter> (attributes)
+    `(formatter
+      ,(concatenate 'string "~<<~A"
+                    (if (null attributes)
+                        "~@[ ~/markup-functions:pprint-attributes/~]"
+                        (with-output-to-string (s)
+                          (write-char #\Space s)
+                          (pprint-attributes s attributes)
+                          (write-string "~*" s)))
+                    ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~A>~:>"))))
 
 #| BNF
 (define-element tag-name &body clause+)
