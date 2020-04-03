@@ -295,6 +295,16 @@ invalid-parents-form := S-expression which generates list which have tag symbols
                     ',(cadr clause)))
          result))))
 
+(defun <tag-formatter> (attributes)
+  `(formatter
+    ,(concatenate 'string "~<<~W"
+                  (if (null attributes)
+                      "~@[ ~/markup-functions:pprint-attributes/~]>"
+                      (with-output-to-string (s)
+                        (write-char #\Space s)
+                        (pprint-attributes s attributes)))
+                  ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>")))
+
 (defmacro define-element (name &body clauses)
   ;; Trivial syntax check.
   (check-type name symbol)
@@ -319,9 +329,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
            (let ((*inside-of* (cons ',name *inside-of*)) (*depth* (1+ *depth*)))
              ,(let ((require (assoc :require clauses))
                     (body
-                     `(format nil
-                              (formatter
-                               "~<<~W~@[ ~/markup-functions:pprint-attributes/~]>~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>")
+                     `(format nil ,(<tag-formatter> nil)
                               (list ',name attributes (indent) args (indent t)
                                     ',name))))
                 (if require
@@ -335,17 +343,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
              `(lambda ()
                 (let ((*inside-of* (cons ',',name *inside-of*))
                       (*depth* (1+ *depth*)))
-                  (format nil
-                          (formatter
-                           ,(concatenate 'string "~<<~W"
-                                         (if (null attributes)
-                                             ""
-                                             (with-output-to-string (s)
-                                               (write-char #\Space s)
-                                               (pprint-attributes s
-                                                                  (eval
-                                                                    attributes))))
-                                         ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>"))
+                  (format nil ,(<tag-formatter> (eval attributes))
                           (list ',',name (indent) (list ,@args) (indent t)
                                 ',',name))))
              whole))
