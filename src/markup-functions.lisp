@@ -283,12 +283,9 @@
                     (body
                      `(format nil
                               (formatter
-                               ,(concatenate 'string "~<<"
-                                             (princ-to-string name)
-                                             "~@[ ~/markup-functions:pprint-attributes/~]>"
-                                             "~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</"
-                                             (princ-to-string name) ">~:>"))
-                              (list attributes (indent) args (indent t)))))
+                               "~<<~W~@[ ~/markup-functions:pprint-attributes/~]>~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>")
+                              (list ',name attributes (indent) args (indent t)
+                                    ',name))))
                 (if require
                     (<require-check> body require)
                     body)))))
@@ -302,7 +299,7 @@
                       (*depth* (1+ *depth*)))
                   (format nil
                           (formatter
-                           ,(concatenate 'string "~<<" (princ-to-string ',name)
+                           ,(concatenate 'string "~<<~W"
                                          (if (null attributes)
                                              ""
                                              (with-output-to-string (s)
@@ -310,9 +307,9 @@
                                                (pprint-attributes s
                                                                   (eval
                                                                     attributes))))
-                                         ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</"
-                                         (princ-to-string ',name) ">~:>"))
-                          (list (indent) (list ,@args) (indent t)))))
+                                         ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>"))
+                          (list ',',name (indent) (list ,@args) (indent t)
+                                ',',name))))
              whole))
        ;; Describe
        (defmethod list-all-attributes ((o (eql ',name)))
