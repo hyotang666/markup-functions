@@ -150,7 +150,6 @@
                        (key (car rest) (car rest)))
                       ((null rest))
                    (when (and (keywordp key)
-                              ,supported-attributes
                               (not (supportedp key ,supported-attributes))
                               (not (uiop:string-prefix-p "DATA-" key)))
                      (funcall *strict* "Unknown attributes for tag ~A: ~S"
