@@ -262,14 +262,10 @@
          ;; Return value closure
          (lambda ()
            ,@(<inside-check> (assoc :invalid-parents clauses) name nil)
-           (let ((*inside-of* (cons ',name *inside-of*))
-                 elements
-                 (*depth* (1+ *depth*)))
-             (handler-bind ((element-existance
-                             (lambda (condition)
-                               (push (existance-tag condition) elements))))
-               (let ((result
-                      (format nil
+           (let ((*inside-of* (cons ',name *inside-of*)) (*depth* (1+ *depth*)))
+             ,(let ((require (assoc :require clauses))
+                    (body
+                     `(format nil
                               (formatter
                                ,(concatenate 'string "~<<"
                                              (princ-to-string name)
@@ -277,16 +273,23 @@
                                              "~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</"
                                              (princ-to-string name) ">~:>"))
                               (list attributes (indent) args (indent t)))))
-                 ,@(let ((require (assoc :require clauses)))
-                     (when require
-                       `((when (and *strict*
-                                    (not
-                                      (intersection elements ,(cadr require))))
-                           (funcall *strict*
-                                    ,(or (getf require :report)
-                                         "Missing required elements. ~S")
-                                    ',(cadr require))))))
-                 result)))))
+                (if (not require)
+                    body
+                    `(let (elements)
+                       (handler-bind ((element-existance
+                                       (lambda (condition)
+                                         (push (existance-tag condition)
+                                               elements))))
+                         (let ((result ,body))
+                           (when (and *strict*
+                                      (not
+                                        (intersection elements
+                                                      ,(cadr require))))
+                             (funcall *strict*
+                                      ,(or (getf require :report)
+                                           "Missing required elements. ~S")
+                                      ',(cadr require)))
+                           result))))))))
        ;; Compile time attributes check.
        (define-compiler-macro ,name (&whole whole attributes &rest args)
          (when (and *strict* (constantp attributes))
