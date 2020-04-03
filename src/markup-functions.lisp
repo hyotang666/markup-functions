@@ -70,7 +70,7 @@
                     v))
         (pprint-exit-if-list-exhausted)
         (write-char #\Space stream)
-        (pprint-newline :miser stream)))))
+        (pprint-newline :fill stream)))))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defun empty-tag (tag)
