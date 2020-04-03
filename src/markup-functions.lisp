@@ -310,7 +310,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
                       (with-output-to-string (s)
                         (write-char #\Space s)
                         (pprint-attributes s attributes)))
-                  ">~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>")))
+                  "~VI~_~{~/markup-functions:pprint-put/~^ ~:_~}~VI~_</~W>~:>")))
 
 #| BNF
 (define-element tag-name &body clause+)
