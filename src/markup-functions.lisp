@@ -358,6 +358,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
          ,@(<satisfies-check> (assoc :attributes clauses) 'attributes)
          ;; Return value closure
          (lambda ()
+           (signal 'element-existance :tag ',name)
            ,@(<inside-check> (assoc :invalid-parents clauses) name nil)
            (let ((*inside-of* (cons ',name *inside-of*)) (*depth* (1+ *depth*)))
              ,(let ((require (assoc :require clauses))
@@ -374,6 +375,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
            (,checker (eval attributes)))
          (if (constantp attributes)
              `(lambda ()
+                (signal 'element-existance :tag ',',name)
                 (let ((*inside-of* (cons ',',name *inside-of*))
                       (*depth* (1+ *depth*)))
                   (format nil ,(<tag-formatter> (eval attributes))
