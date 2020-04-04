@@ -181,7 +181,8 @@ invalid-parents-form := S-expression which generates list which have tag symbols
   (check-type tag-name symbol)
   (dolist (clause clauses)
     (assert (find (car clause)
-                  '(:attributes :valid-parents :invalid-parents))))
+                  '(:attributes :valid-parents :invalid-parents
+                    :documentation))))
   ;; Bindings
   (let ((supported-attributes (intern (format nil "*~A-ATTRIBUTES*" tag-name)))
         (checker (intern (format nil "CHECK-~A-ATTRIBUTES" tag-name)))
@@ -196,6 +197,9 @@ invalid-parents-form := S-expression which generates list which have tag symbols
            (<attributes-checker> checker supported-attributes tag-name))
        ;; Main function.
        (defun ,tag-name (&rest args)
+         ,@(let ((documentation (cadr (assoc :documentation clauses))))
+             (when documentation
+               (list documentation)))
          ,@(when attributes-specified
              `((,checker args))) ; Runtime attributes check.
          ,@(<satisfies-check> (assoc :attributes clauses) 'args)
@@ -341,7 +345,8 @@ invalid-parents-form := S-expression which generates list which have tag symbols
   ;; Trivial syntax check.
   (check-type name symbol)
   (dolist (clause clauses)
-    (assert (find (car clause) '(:attributes :require :invalid-parents))))
+    (assert (find (car clause)
+                  '(:attributes :require :invalid-parents :documentation))))
   ;; Bind
   (let ((supported-attributes (gensym "ATTRIBUTES"))
         (checker (intern (format nil "CHECK-~A-ATTRIBUTES" name))))
@@ -352,6 +357,9 @@ invalid-parents-form := S-expression which generates list which have tag symbols
          ,(car (<attributes-checker> checker supported-attributes name)))
        ;; Main function.
        (defun ,name (attributes &rest args)
+         ,@(let ((documentation (cadr (assoc :documentation clauses))))
+             (when documentation
+               (list documentation)))
          (when ,supported-attributes
            (,checker attributes))
          ,@(<satisfies-check> (assoc :attributes clauses) 'attributes)
