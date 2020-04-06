@@ -104,13 +104,24 @@
         *depth*)
     *indent*))
 
+(defparameter *escape*
+  (let ((ht (make-hash-table)))
+    (setf (gethash #\' ht) "&quot;"
+          (gethash #\& ht) "&amp;"
+          (gethash #\< ht) "&lt;"
+          (gethash #\> ht) "&gt;")
+    ht))
+
+(defun escape (char) (values (gethash char *escape* char)))
+
 (defgeneric pprint-put
     (stream thing &rest noise)
   (:method (stream (o null) &rest noise) (declare (ignore stream noise))
    ;; do nothing
    nil)
   (:method (stream (o string) &rest noise) (declare (ignore noise))
-   (write-string o stream))
+   (loop :for c :across o
+         :do (write (escape c) :stream stream :escape nil)))
   (:method (stream (o function) &rest noise) (declare (ignore noise))
    (write-string (funcall o) stream))
   (:method (stream (o rational) &rest noise) (declare (ignore noise))
