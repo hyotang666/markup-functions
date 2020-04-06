@@ -89,8 +89,7 @@
                     key
                     v))
         (pprint-exit-if-list-exhausted)
-        (write-char #\Space stream)
-        (pprint-newline :fill stream)))))
+        (write-char #\Space stream)))))
 
 (defvar *inside-of* nil)
 
