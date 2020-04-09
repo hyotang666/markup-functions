@@ -11,7 +11,8 @@
         '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
           header main form label b table tr td button))
        (empty-elements '(!doctype meta link input br))
-       (config '(*indent* *strict* *print-case* *print-pretty*))
+       (config
+        '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
        (dev-tools '(list-all-attributes))
        (all
         (append main-functions (cdr standard-elements) empty-elements config
@@ -68,10 +69,14 @@
         ;; Misc event
         :ontoggle))))
 
+(defparameter *optional-attributes* nil)
+
 (defgeneric list-all-attributes
     (thing))
 
-(defun supportedp (key list) (some (lambda (ht) (gethash key ht)) list))
+(defun supportedp (key list)
+  (or (find key *optional-attributes*)
+      (some (lambda (ht) (gethash key ht)) list)))
 
 (defun pprint-attributes (stream args &rest noise)
   (declare (ignore noise))
