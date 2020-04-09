@@ -363,7 +363,8 @@ invalid-parents-form := S-expression which generates list which have tag symbols
   (check-type name symbol)
   (dolist (clause clauses)
     (assert (find (car clause)
-                  '(:attributes :require :invalid-parents :documentation))))
+                  '(:attributes :require :invalid-parents :documentation
+                    :valid-parents))))
   ;; Bind
   (let ((supported-attributes (gensym "ATTRIBUTES"))
         (checker (intern (format nil "CHECK-~A-ATTRIBUTES" name))))
@@ -383,6 +384,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
          ;; Return value closure
          (lambda ()
            (signal 'element-existance :tag ',name)
+           ,@(<inside-check> (assoc :valid-parents clauses) name t)
            ,@(<inside-check> (assoc :invalid-parents clauses) name nil)
            (let ((*inside-of* (cons ',name *inside-of*)) (*depth* (1+ *depth*)))
              ,(let ((require (assoc :require clauses))
