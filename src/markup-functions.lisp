@@ -9,7 +9,7 @@
 (let* ((main-functions '(html5))
        (standard-elements
         '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
-          header main form label b table tr td button))
+          header main form label b table tr td button ol ul li))
        (empty-elements '(!doctype meta link input br))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -509,6 +509,19 @@ invalid-parents-form := S-expression which generates list which have tag symbols
    :satisfies (lambda (attributes) (getf attributes :type))
    :report "Always specify the type attribute for a <button> element.~:@_~
    Different browsers use different default types for the <button> element."))
+
+(define-element ul (:attributes (list *global-attributes* *event-attributes*)))
+
+(define-element ol
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table<-list '(:reversed :start :type)))))
+
+(define-element li
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:valid-parents '(ol ul menu)
+   :report
+     "The <li> tag is used in ordered lists(<ol>), unordered lists (<ul>), and in menu lists (<menu>)."))
 
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
