@@ -228,10 +228,12 @@ invalid-parents-form := S-expression which generates list which have tag symbols
                     "~<<~A~@[ ~:I~@_~/markup-functions:pprint-attributes/~]>~:>")
                    (list ',tag-name args))))
        ;; Compile time attribute checker.
+       #|
        ,@(when attributes-specified
            `((define-compiler-macro ,tag-name (&whole whole &rest args)
                (,checker args)
                whole)))
+       |#
        ;; Describe.
        (defmethod list-all-attributes ((s (eql ',tag-name)))
          ,(when attributes-specified
@@ -392,6 +394,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
                     (<require-check> body require)
                     body)))))
        ;; Compile time attributes check.
+       #++
        (define-compiler-macro ,name (&whole whole attributes &rest args)
          (when (constantp attributes)
            (,checker (eval attributes)))
