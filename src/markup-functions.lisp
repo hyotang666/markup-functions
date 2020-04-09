@@ -9,7 +9,7 @@
 (let* ((main-functions '(html5))
        (standard-elements
         '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
-          header main form label b table tr td button ol ul li))
+          header main form label b table tr td button ol ul li script))
        (empty-elements '(!doctype meta link input br))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -522,6 +522,11 @@ invalid-parents-form := S-expression which generates list which have tag symbols
   (:valid-parents '(ol ul menu)
    :report
      "The <li> tag is used in ordered lists(<ol>), unordered lists (<ul>), and in menu lists (<menu>)."))
+
+(define-element script
+  (:attributes
+     (list *global-attributes*
+           (table<-list '(:async :charset :defer :src :type)))))
 
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
