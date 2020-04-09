@@ -9,7 +9,7 @@
 (let* ((main-functions '(html5))
        (standard-elements
         '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
-          header main form label b table tr td))
+          header main form label b table tr td button))
        (empty-elements '(!doctype meta link input br))
        (config '(*indent* *strict* *print-case* *print-pretty*))
        (dev-tools '(list-all-attributes))
@@ -489,6 +489,16 @@ invalid-parents-form := S-expression which generates list which have tag symbols
   (:attributes
      (list *global-attributes* *event-attributes*
            (table<-list '(:colspan :headers :rowspan)))))
+
+(define-element button
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table<-list
+             '(:autofocus :disabled :form :formaction :formenctype :formmethod
+               :formnovalidate :formtarget :name :type :value)))
+   :satisfies (lambda (attributes) (getf attributes :type))
+   :report "Always specify the type attribute for a <button> element.~:@_~
+   Different browsers use different default types for the <button> element."))
 
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
