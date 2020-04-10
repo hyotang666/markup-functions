@@ -10,7 +10,7 @@
        (standard-elements
         '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
           header main form label b table tr td button ol ul li script mark))
-       (empty-elements '(!doctype meta link input br))
+       (empty-elements '(!doctype meta link input br img))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
        (dev-tools '(list-all-attributes))
@@ -305,6 +305,16 @@ invalid-parents-form := S-expression which generates list which have tag symbols
 
 (define-empty-element br
   (:attributes (list *global-attributes* *event-attributes*)))
+
+(define-empty-element img
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table<-list
+             '(:alt :crossorigin :height :ismap :longdesc :referrerpolicy
+               :sizes :src :srcset :usemap :width)))
+   :satisfies
+     (lambda (attributes) (and (getf attributes :alt) (getf attributes :src)))
+   :report "The <img> tag has two required attributes: src and alt."))
 
 (define-condition element-existance ()
   ((tag :initarg :tag :reader existance-tag)))
