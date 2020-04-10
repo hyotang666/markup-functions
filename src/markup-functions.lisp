@@ -550,7 +550,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
   (dev:put-expand
     (mapcar (lambda (key) (intern (string-upcase key) :keyword))
             (map 'list #'plump:text
-                 (clss:select "#table1 td:first-child"
+                 (clss:select ".w3-table-all td:first-child"
                               (plump:parse (dex:get url)))))))
 
 #++
