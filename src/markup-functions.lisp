@@ -9,7 +9,8 @@
 (let* ((main-functions '(html5))
        (standard-elements
         '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
-          header main form label b table tr td button ol ul li script mark))
+          header main form label b table tr td button ol ul li script mark
+          textarea))
        (empty-elements '(!doctype meta link input br img))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -540,6 +541,13 @@ invalid-parents-form := S-expression which generates list which have tag symbols
 
 (define-element mark
   (:attributes (list *global-attributes* *event-attributes*)))
+
+(define-element textarea
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table<-list
+             '(:autofocus :cols :dirname :disabled :form :maxlength :name
+               :placeholder :readonly :required :rows :wrap)))))
 
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
