@@ -375,7 +375,7 @@ invalid-parents-form := S-expression which generates list which have tag symbols
   (dolist (clause clauses)
     (assert (find (car clause)
                   '(:attributes :require :invalid-parents :documentation
-                    :valid-parents))))
+                    :valid-parents :pretty))))
   ;; Bind
   (let ((supported-attributes (gensym "ATTRIBUTES"))
         (checker (intern (format nil "CHECK-~A-ATTRIBUTES" name))))
@@ -397,7 +397,10 @@ invalid-parents-form := S-expression which generates list which have tag symbols
            (signal 'element-existance :tag ',name)
            ,@(<inside-check> (assoc :valid-parents clauses) name t)
            ,@(<inside-check> (assoc :invalid-parents clauses) name nil)
-           (let ((*inside-of* (cons ',name *inside-of*)) (*depth* (1+ *depth*)))
+           (let ((*inside-of* (cons ',name *inside-of*))
+                 (*depth* (1+ *depth*))
+                 ,@(when (assoc :pretty clauses)
+                     `(*print-pretty*)))
              ,(let ((require (assoc :require clauses))
                     (body
                      `(format nil ,(<tag-formatter> nil)
@@ -547,7 +550,8 @@ invalid-parents-form := S-expression which generates list which have tag symbols
      (list *global-attributes* *event-attributes*
            (table<-list
              '(:autofocus :cols :dirname :disabled :form :maxlength :name
-               :placeholder :readonly :required :rows :wrap)))))
+               :placeholder :readonly :required :rows :wrap))))
+  (:pretty nil))
 
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
