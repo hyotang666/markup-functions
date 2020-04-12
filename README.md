@@ -1,6 +1,6 @@
 # MARKUP-FUNCTIONS 0.0.0
 ## What is this?
-HTML generator.
+HTML5 generator.
 
 ### Current lisp world
 There is [cl-who](https://edicl.github.io/cl-who/)
@@ -14,7 +14,7 @@ For me, it is too hard to learn how to use above libraries since it is macros.
 You need to know about its [syntax and semantics](https://edicl.github.io/cl-who/#syntax).
 
 Markup-functions provides (as name shows) functions rather than macros.
-You never need to know about its syntax and semantics since you already knows about function's syntax and semantics.
+You never need to know about its syntax and semantics since you already knows about function's one.
 
 #### Too much flexible.
 I am stupid.
@@ -40,7 +40,7 @@ debugger invoked on a SB-INT:SIMPLE-READER-PACKAGE-ERROR in thread
 ```
 
 Of course I typo attributes too.
-With markup-functions, when you typo attributes key an error is signaled.
+With markup-functions, when you typo attributes keys an error is signaled.
 
 ```lisp
 * (htmf:meta :char-set :utf-8)
@@ -228,7 +228,49 @@ Markup-functions generate pretty printing html.
 
 ## Usage
 
+Every element functions returns function as `(FUNCTION () STRING)`.
+
+```lisp
+* (htmf:br)
+#<CLOSURE (LAMBDA () :IN BR) {...}>
+
+* (funcall *)
+"<BR>"
+```
+
+Every empty element functions accepts key value pair as attributes.
+
+```lisp
+* (funcall (htmf:meta :charset :utf-8))
+"<META CHARSET='UTF-8'>"
+```
+
+When attribute value is `T`, value becomes key itself.
+
+```lisp
+* (funcall (htmf:meta :charset t))
+"<META CHARSET='CHARSET'>"
+```
+
+Every standard element functions accepts key value pair (i.e. plist) as its first argument.
+
+```lisp
+* (funcall (htmf:a '(:href "/url") "label"))
+"<A HREF='/url'>label</A>"
+```
+
+Top level function `HTML5` has same API of standard element functions,
+but returns string which has doctype declaration.
+
+```lisp
+* (htmf:html5 () (htmf:title () "hoge"))
+"<!DOCTYPE HTML>
+<HTML><TITLE>hoge</TITLE></HTML>"
+```
+
 ### Relaxing errors.
+
+Relaxing to `WARN`, bind `HTMF:*STRICT*` with `WARN`.
 
 ```lisp
 * (let ((htmf:*strict* 'warn))
@@ -236,12 +278,20 @@ Markup-functions generate pretty printing html.
 
 WARNING: Unknown attributes for tag META: :CHAR-SET
 #<CLOSURE (LAMBDA () :IN META) {...}>
+```
 
+Disable any checking, bind `HTMF:*STRICT*` with `NIL`.
+
+```lisp
 * (let ((htmf:*strict* nil))
     (htmf:meta :char-set :utf-8))
 
 #<CLOSURE (LAMBDA () :IN META) {...}>
+```
 
+To accept not supported attributes (e.g. aria-label) temporarily, bind `HTMF:*OPTIONAL-ATTRIBUTES*` with list.
+
+```lisp
 * (let ((htmf:*optional-attributes* '(:char-set)))
     (htmf:meta :char-set :utf-8))
 
@@ -249,6 +299,8 @@ WARNING: Unknown attributes for tag META: :CHAR-SET
 ```
 
 ### Control pretty printings.
+
+Bind `CL:*PRINT-PRETTY*`.
 
 ```lisp
 (let ((*print-pretty* nil))
@@ -266,6 +318,8 @@ WARNING: Unknown attributes for tag META: :CHAR-SET
 ```
 
 ### Control printing case.
+
+Bind `CL:*PRINT-CASE*`.
 
 ```lisp
 (let ((*print-case* :downcase))
@@ -320,6 +374,10 @@ WARNING: Unknown attributes for tag META: :CHAR-SET
   </table>
 </html>"
 ```
+
+### NOTE
+Markup-functions developed as YAGNI style.
+So many tags are not implemented yet.
 
 ## From developer
 
