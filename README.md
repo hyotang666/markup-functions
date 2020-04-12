@@ -40,7 +40,7 @@ debugger invoked on a SB-INT:SIMPLE-READER-PACKAGE-ERROR in thread
 ```
 
 Of course I typo attributes too.
-With markup-functions, when you typo attributes key an error is signaled in compile time if it is constant, even if not constant, an error is signaled in runtime.
+With markup-functions, when you typo attributes key an error is signaled.
 
 ```lisp
 * (htmf:meta :char-set :utf-8)
@@ -173,17 +173,16 @@ Cl-who provides indentation but not pretty.
 Markup-functions generate pretty printing html.
 
 ```lisp
-(setf *strict* nil) ; Attributes :BGCOLOR is not supported in html5.
-
-(htmf:html5 nil
-            (apply #'htmf:table '(:border 0 :cellpadding 4)
-                   (loop :for i :below 25 :by 5
-                         :collect (apply #'htmf:tr '(:align "right")
-                                         (loop :for j :from i :below (+ i 5)
-                                               :collect (htmf:td (list :bgcolor (if (oddp j)
-                                                                                    "pink"
-                                                                                    "green"))
-                                                           (format nil "~@R" (1+ j))))))))
+(let ((htmf:*strict* nil)) ; Attributes :BGCOLOR is not supported in html5.
+  (htmf:html5 nil
+              (apply #'htmf:table '(:border 0 :cellpadding 4)
+                     (loop :for i :below 25 :by 5
+                           :collect (apply #'htmf:tr '(:align "right")
+                                           (loop :for j :from i :below (+ i 5)
+                                                 :collect (htmf:td (list :bgcolor (if (oddp j)
+                                                                                      "pink"
+                                                                                      "green"))
+                                                             (format nil "~@R" (1+ j)))))))))
 
 "<!DOCTYPE HTML>
 <HTML>
@@ -232,18 +231,19 @@ Markup-functions generate pretty printing html.
 ### Relaxing errors.
 
 ```lisp
-* (setf htmf:*strict* 'warn)
-
-WARN
-* (htmf:meta :char-set :utf-8))
+* (let ((htmf:*strict* 'warn))
+    (htmf:meta :char-set :utf-8))
 
 WARNING: Unknown attributes for tag META: :CHAR-SET
 #<CLOSURE (LAMBDA () :IN META) {...}>
 
-* (setf htmf:*strict* nil)
+* (let ((htmf:*strict* nil))
+    (htmf:meta :char-set :utf-8))
 
-NIL
-* (htmf:meta :char-set :utf-8)
+#<CLOSURE (LAMBDA () :IN META) {...}>
+
+* (let ((htmf:*optional-attributes* '(:char-set)))
+    (htmf:meta :char-set :utf-8))
 
 #<CLOSURE (LAMBDA () :IN META) {...}>
 ```
