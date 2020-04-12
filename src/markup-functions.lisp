@@ -348,7 +348,8 @@ invalid-parents-form := S-expression which generates list which have tag symbols
 (define-element tag-name &body clause+)
 
 tag-name := (and symbol (not (or boolean keyword)))
-clause := [ attributes-clause | require-clause | invalid-parents-clause ]
+clause := [ attributes-clause | require-clause | invalid-parents-clause
+          | documentation-clause | valid-parents-clause | pretty-clause ]
 
 attributes-clause := (:attributes attributes-form &rest attributes-option*)
 attributes-form := S-expression which generate list of hash tables.
@@ -365,8 +366,13 @@ report-option := :report string
 require-clause := (:require require-form report-option?)
 require-form := S-expression which generates list which have tag symbols.
 
-invalid-parents-clause := (:invalid-parents invalid-parents-form report-option?)
-invalid-parents-form := S-expression which generates list which have tag symbols.
+invalid-parents-clause := (:invalid-parents parents-form report-option?)
+valid-parents-clause := (:valid-parents parents-form report-option?)
+parents-form := S-expression which generates list which have tag symbols.
+
+documentation-clause := (:documentation string)
+
+pretty-clause := (:pretty boolean)
 |#
 
 (defmacro define-element (name &body clauses)
