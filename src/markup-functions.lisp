@@ -10,7 +10,7 @@
        (standard-elements
         '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
           header main form label b table tr td button ol ul li script mark
-          textarea span))
+          textarea span abbr))
        (empty-elements '(!doctype meta link input br img))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -560,6 +560,9 @@ pretty-clause := (:pretty boolean)
   (:pretty nil))
 
 (define-element span
+  (:attributes (list *global-attributes* *event-attributes*)))
+
+(define-element abbr
   (:attributes (list *global-attributes* *event-attributes*)))
 
 (defun html5 (attributes &rest args)
