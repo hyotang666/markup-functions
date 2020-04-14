@@ -168,29 +168,29 @@
                        key))))))))
 
 #| BNF
-(define-empty-element tag-name &body clause+)
-
-tag-name := (and symbol (not (or boolean keyword)))
-clause := [ attributes-clause | valid-prents-clause | invalid-parents-clause ]
-
-attributes-clause := (:attributes attributes-form &rest attributes-option*)
-attributes-form := S-expression which generate list of hash tables.
-
-attributes-option := [ satisfies-option | report-option ]
-
-satisfies-option := :satisfies satisfies-function
-satisfies-function := S-expression which generates function-designator which
-                      as (function (attributes) generalized-boolean)
-                      attributes := key value pair.
-
-report-option := :report string
-
-valid-parents-clause := (:valid-parents valid-parents-form report-option?)
-valid-parents-form := S-expression which generates list which have tag symbols.
-
-invalid-parents-clause := (:invalid-parents invalid-parents-form report-option?)
-invalid-parents-form := S-expression which generates list which have tag symbols.
-|#
+ | (define-empty-element tag-name &body clause+)
+ | 
+ | tag-name := (and symbol (not (or boolean keyword)))
+ | clause := [ attributes-clause | valid-prents-clause | invalid-parents-clause ]
+ | 
+ | attributes-clause := (:attributes attributes-form attributes-option*)
+ | attributes-form := S-expression which generate list of hash tables.
+ | 
+ | attributes-option := [ satisfies-option | report-option ]
+ | 
+ | satisfies-option := :satisfies satisfies-function
+ | satisfies-function := S-expression which generates function-designator which
+ |                       as (function (attributes) generalized-boolean)
+ |                       attributes := key value pair.
+ | 
+ | report-option := :report string
+ | 
+ | valid-parents-clause := (:valid-parents valid-parents-form report-option?)
+ | valid-parents-form := S-expression which generates list which have tag symbols.
+ | 
+ | invalid-parents-clause := (:invalid-parents invalid-parents-form report-option?)
+ | invalid-parents-form := S-expression which generates list which have tag symbols.
+ |#
 
 (defmacro define-empty-element (tag-name &body clauses)
   ;; Trivial syntax check.
@@ -345,34 +345,34 @@ invalid-parents-form := S-expression which generates list which have tag symbols
                     ">~VI~_~{~/markup-functions:pprint-put/~^ ~_~}~VI~_</~A>~:>"))))
 
 #| BNF
-(define-element tag-name &body clause+)
-
-tag-name := (and symbol (not (or boolean keyword)))
-clause := [ attributes-clause | require-clause | invalid-parents-clause
-          | documentation-clause | valid-parents-clause | pretty-clause ]
-
-attributes-clause := (:attributes attributes-form &rest attributes-option*)
-attributes-form := S-expression which generate list of hash tables.
-
-attributes-option := [ satisfies-option | report-option ]
-
-satisfies-option := :satisfies satisfies-function
-satisfies-function := S-expression which generates function-designator which
-                      as (function (attributes) generalized-boolean)
-                      attributes := key value pair.
-
-report-option := :report string
-
-require-clause := (:require require-form report-option?)
-require-form := S-expression which generates list which have tag symbols.
-
-invalid-parents-clause := (:invalid-parents parents-form report-option?)
-valid-parents-clause := (:valid-parents parents-form report-option?)
-parents-form := S-expression which generates list which have tag symbols.
-
-documentation-clause := (:documentation string)
-
-pretty-clause := (:pretty boolean)
+ | (define-element tag-name &body clause+)
+ | 
+ | tag-name := (and symbol (not (or boolean keyword)))
+ | clause := [ attributes-clause | require-clause | invalid-parents-clause
+ |           | documentation-clause | valid-parents-clause | pretty-clause ]
+ | 
+ | attributes-clause := (:attributes attributes-form attributes-option*)
+ | attributes-form := S-expression which generate list of hash tables.
+ | 
+ | attributes-option := [ satisfies-option | report-option ]
+ | 
+ | satisfies-option := :satisfies satisfies-function
+ | satisfies-function := S-expression which generates function-designator which
+ |                       as (function (attributes) generalized-boolean)
+ |                       attributes := key value pair.
+ | 
+ | report-option := :report string
+ | 
+ | require-clause := (:require require-form report-option?)
+ | require-form := S-expression which generates list which have tag symbols.
+ | 
+ | invalid-parents-clause := (:invalid-parents parents-form report-option?)
+ | valid-parents-clause := (:valid-parents parents-form report-option?)
+ | parents-form := S-expression which generates list which have tag symbols.
+ | 
+ | documentation-clause := (:documentation string)
+ | 
+ | pretty-clause := (:pretty boolean)
 |#
 
 (defmacro define-element (name &body clauses)
