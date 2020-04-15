@@ -188,42 +188,32 @@ Markup-functions generate pretty printing html.
 <HTML>
   <TABLE BORDER='0' CELLPADDING='4'>
     <TR ALIGN='right'>
-      <TD BGCOLOR='green'>I</TD>
-      <TD BGCOLOR='pink'>II</TD>
-      <TD BGCOLOR='green'>III</TD>
-      <TD BGCOLOR='pink'>IV</TD>
+      <TD BGCOLOR='green'>I</TD><TD BGCOLOR='pink'>II</TD>
+      <TD BGCOLOR='green'>III</TD><TD BGCOLOR='pink'>IV</TD>
       <TD BGCOLOR='green'>V</TD>
     </TR>
     <TR ALIGN='right'>
-      <TD BGCOLOR='pink'>VI</TD>
-      <TD BGCOLOR='green'>VII</TD>
-      <TD BGCOLOR='pink'>VIII</TD>
-      <TD BGCOLOR='green'>IX</TD>
+      <TD BGCOLOR='pink'>VI</TD><TD BGCOLOR='green'>VII</TD>
+      <TD BGCOLOR='pink'>VIII</TD><TD BGCOLOR='green'>IX</TD>
       <TD BGCOLOR='pink'>X</TD>
     </TR>
     <TR ALIGN='right'>
-      <TD BGCOLOR='green'>XI</TD>
-      <TD BGCOLOR='pink'>XII</TD>
-      <TD BGCOLOR='green'>XIII</TD>
-      <TD BGCOLOR='pink'>XIV</TD>
+      <TD BGCOLOR='green'>XI</TD><TD BGCOLOR='pink'>XII</TD>
+      <TD BGCOLOR='green'>XIII</TD><TD BGCOLOR='pink'>XIV</TD>
       <TD BGCOLOR='green'>XV</TD>
     </TR>
     <TR ALIGN='right'>
-      <TD BGCOLOR='pink'>XVI</TD>
-      <TD BGCOLOR='green'>XVII</TD>
-      <TD BGCOLOR='pink'>XVIII</TD>
-      <TD BGCOLOR='green'>XIX</TD>
+      <TD BGCOLOR='pink'>XVI</TD><TD BGCOLOR='green'>XVII</TD>
+      <TD BGCOLOR='pink'>XVIII</TD><TD BGCOLOR='green'>XIX</TD>
       <TD BGCOLOR='pink'>XX</TD>
     </TR>
     <TR ALIGN='right'>
-      <TD BGCOLOR='green'>XXI</TD>
-      <TD BGCOLOR='pink'>XXII</TD>
-      <TD BGCOLOR='green'>XXIII</TD>
-      <TD BGCOLOR='pink'>XXIV</TD>
+      <TD BGCOLOR='green'>XXI</TD><TD BGCOLOR='pink'>XXII</TD>
+      <TD BGCOLOR='green'>XXIII</TD><TD BGCOLOR='pink'>XXIV</TD>
       <TD BGCOLOR='green'>XXV</TD>
     </TR>
   </TABLE>
-</HTML>"
+</HTML>" 
 ```
 
 ## Usage
@@ -322,7 +312,7 @@ Bind `CL:*PRINT-PRETTY*`.
 Bind `CL:*PRINT-CASE*`.
 
 ```lisp
-(let ((*print-case* :downcase))
+(let ((*print-case* :downcase) htmf:*strict*)
   (htmf:html5 nil
               (htmf:table '(:border 0 :cellpadding 4)
                 (loop :for i :below 25 :by 5
@@ -337,42 +327,32 @@ Bind `CL:*PRINT-CASE*`.
 <html>
   <table border='0' cellpadding='4'>
     <tr align='right'>
-      <td bgcolor='green'>I</td>
-      <td bgcolor='pink'>II</td>
-      <td bgcolor='green'>III</td>
-      <td bgcolor='pink'>IV</td>
+      <td bgcolor='green'>I</td><td bgcolor='pink'>II</td>
+      <td bgcolor='green'>III</td><td bgcolor='pink'>IV</td>
       <td bgcolor='green'>V</td>
     </tr>
     <tr align='right'>
-      <td bgcolor='pink'>VI</td>
-      <td bgcolor='green'>VII</td>
-      <td bgcolor='pink'>VIII</td>
-      <td bgcolor='green'>IX</td>
+      <td bgcolor='pink'>VI</td><td bgcolor='green'>VII</td>
+      <td bgcolor='pink'>VIII</td><td bgcolor='green'>IX</td>
       <td bgcolor='pink'>X</td>
     </tr>
     <tr align='right'>
-      <td bgcolor='green'>XI</td>
-      <td bgcolor='pink'>XII</td>
-      <td bgcolor='green'>XIII</td>
-      <td bgcolor='pink'>XIV</td>
+      <td bgcolor='green'>XI</td><td bgcolor='pink'>XII</td>
+      <td bgcolor='green'>XIII</td><td bgcolor='pink'>XIV</td>
       <td bgcolor='green'>XV</td>
     </tr>
     <tr align='right'>
-      <td bgcolor='pink'>XVI</td>
-      <td bgcolor='green'>XVII</td>
-      <td bgcolor='pink'>XVIII</td>
-      <td bgcolor='green'>XIX</td>
+      <td bgcolor='pink'>XVI</td><td bgcolor='green'>XVII</td>
+      <td bgcolor='pink'>XVIII</td><td bgcolor='green'>XIX</td>
       <td bgcolor='pink'>XX</td>
     </tr>
     <tr align='right'>
-      <td bgcolor='green'>XXI</td>
-      <td bgcolor='pink'>XXII</td>
-      <td bgcolor='green'>XXIII</td>
-      <td bgcolor='pink'>XXIV</td>
+      <td bgcolor='green'>XXI</td><td bgcolor='pink'>XXII</td>
+      <td bgcolor='green'>XXIII</td><td bgcolor='pink'>XXIV</td>
       <td bgcolor='green'>XXV</td>
     </tr>
   </table>
-</html>"
+</html>" 
 ```
 
 ### NOTE
