@@ -175,14 +175,14 @@ Markup-functions generate pretty printing html.
 ```lisp
 (let ((htmf:*strict* nil)) ; Attributes :BGCOLOR is not supported in html5.
   (htmf:html5 nil
-              (apply #'htmf:table '(:border 0 :cellpadding 4)
-                     (loop :for i :below 25 :by 5
-                           :collect (apply #'htmf:tr '(:align "right")
-                                           (loop :for j :from i :below (+ i 5)
-                                                 :collect (htmf:td (list :bgcolor (if (oddp j)
-                                                                                      "pink"
-                                                                                      "green"))
-                                                             (format nil "~@R" (1+ j)))))))))
+              (htmf:table '(:border 0 :cellpadding 4)
+                (loop :for i :below 25 :by 5
+                      :collect (htmf:tr '(:align "right")
+                                 (loop :for j :from i :below (+ i 5)
+                                       :collect (htmf:td (list :bgcolor (if (oddp j)
+                                                                            "pink"
+                                                                            "green"))
+                                                   (format nil "~@R" (1+ j)))))))))
 
 "<!DOCTYPE HTML>
 <HTML>
@@ -305,14 +305,14 @@ Bind `CL:*PRINT-PRETTY*`.
 ```lisp
 (let ((*print-pretty* nil))
   (htmf:html5 nil
-              (apply #'htmf:table '(:border 0 :cellpadding 4)
-                     (loop :for i :below 25 :by 5
-                           :collect (apply #'htmf:tr '(:align "right")
-                                           (loop :for j :from i :below (+ i 5)
-                                                 :collect (htmf:td (list :bgcolor (if (oddp j)
-                                                                                      "pink"
-                                                                                      "green"))
-                                                             (format nil "~@R" (1+ j)))))))))
+              (htmf:table '(:border 0 :cellpadding 4)
+                (loop :for i :below 25 :by 5
+                      :collect (htmf:tr '(:align "right")
+                                 (loop :for j :from i :below (+ i 5)
+                                       :collect (htmf:td (list :bgcolor (if (oddp j)
+                                                                            "pink"
+                                                                            "green"))
+                                                   (format nil "~@R" (1+ j)))))))))
 
 "<!DOCTYPE HTML><HTML><TABLE BORDER='0' CELLPADDING='4'><TR ALIGN='right'><TD BGCOLOR='green'>I</TD> <TD BGCOLOR='pink'>II</TD> <TD BGCOLOR='green'>III</TD> <TD BGCOLOR='pink'>IV</TD> <TD BGCOLOR='green'>V</TD></TR> <TR ALIGN='right'><TD BGCOLOR='pink'>VI</TD> <TD BGCOLOR='green'>VII</TD> <TD BGCOLOR='pink'>VIII</TD> <TD BGCOLOR='green'>IX</TD> <TD BGCOLOR='pink'>X</TD></TR> <TR ALIGN='right'><TD BGCOLOR='green'>XI</TD> <TD BGCOLOR='pink'>XII</TD> <TD BGCOLOR='green'>XIII</TD> <TD BGCOLOR='pink'>XIV</TD> <TD BGCOLOR='green'>XV</TD></TR> <TR ALIGN='right'><TD BGCOLOR='pink'>XVI</TD> <TD BGCOLOR='green'>XVII</TD> <TD BGCOLOR='pink'>XVIII</TD> <TD BGCOLOR='green'>XIX</TD> <TD BGCOLOR='pink'>XX</TD></TR> <TR ALIGN='right'><TD BGCOLOR='green'>XXI</TD> <TD BGCOLOR='pink'>XXII</TD> <TD BGCOLOR='green'>XXIII</TD> <TD BGCOLOR='pink'>XXIV</TD> <TD BGCOLOR='green'>XXV</TD></TR></TABLE></HTML>"
 ```
@@ -324,14 +324,14 @@ Bind `CL:*PRINT-CASE*`.
 ```lisp
 (let ((*print-case* :downcase))
   (htmf:html5 nil
-              (apply #'htmf:table '(:border 0 :cellpadding 4)
-                     (loop :for i :below 25 :by 5
-                           :collect (apply #'htmf:tr '(:align "right")
-                                           (loop :for j :from i :below (+ i 5)
-                                                 :collect (htmf:td (list :bgcolor (if (oddp j)
-                                                                                      "pink"
-                                                                                      "green"))
-                                                             (format nil "~@R" (1+ j)))))))))
+              (htmf:table '(:border 0 :cellpadding 4)
+                (loop :for i :below 25 :by 5
+                      :collect (htmf:tr '(:align "right")
+                                 (loop :for j :from i :below (+ i 5)
+                                       :collect (htmf:td (list :bgcolor (if (oddp j)
+                                                                            "pink"
+                                                                            "green"))
+                                                   (format nil "~@R" (1+ j)))))))))
 
 "<!doctype html>
 <html>
