@@ -341,7 +341,7 @@
                           (write-char #\Space s)
                           (pprint-attributes s attributes)
                           (write-string "~*" s)))
-                    ">~VI~_~{~/markup-functions:pprint-put/~^ ~_~}~VI~_</~A>~:>"))))
+                    ">~VI~_~{~/markup-functions:pprint-put/~^~_~}~VI~_</~A>~:>"))))
 
 #| BNF
  | (define-element tag-name &body clause+)
