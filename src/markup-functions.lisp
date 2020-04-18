@@ -10,8 +10,8 @@
        (standard-elements
         '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
           header main form label b table tr td button ol ul li script mark
-          textarea span abbr))
-       (empty-elements '(!doctype meta link input br img))
+          textarea span abbr map*))
+       (empty-elements '(!doctype meta link input br img area))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
        (dev-tools '(list-all-attributes))
@@ -316,6 +316,15 @@
      (lambda (attributes) (and (getf attributes :alt) (getf attributes :src)))
    :report "The <img> tag has two required attributes: src and alt."))
 
+(define-empty-element area
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table<-list
+             '(:alt :coords :download :href :hreflang :media :rel :shape
+               :target :type))))
+  (:valid-parents '(map*)
+   :report "The <area> element is always nested inside a <map> tag."))
+
 (define-condition element-existance ()
   ((tag :initarg :tag :reader existance-tag)))
 
@@ -563,6 +572,12 @@
 
 (define-element abbr
   (:attributes (list *global-attributes* *event-attributes*)))
+
+(define-element map*
+  (:attributes
+     (list *global-attributes* *event-attributes* (table<-list '(:name)))
+   :satisfies (lambda (attributes) (getf attributes :name))
+   :report "Missing required attribute :NAME."))
 
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
