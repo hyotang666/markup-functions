@@ -123,7 +123,7 @@
 (defgeneric pprint-put
     (stream thing &rest noise)
   (:method (stream (o list) &rest noise) (declare (ignore noise))
-   (format stream "~{~/markup-functions:pprint-put/~^~:_~}" o))
+   (format stream "~{~/markup-functions:pprint-put/~^~_~}" o))
   (:method (stream (o string) &rest noise) (declare (ignore noise))
    (loop :for c :across o
          :do (write (escape c) :stream stream :escape nil)))
