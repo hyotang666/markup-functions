@@ -10,7 +10,7 @@
        (standard-elements
         '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
           header main form label b table tr td button ol ul li script mark
-          textarea span abbr map*))
+          textarea span abbr map* style))
        (empty-elements '(!doctype meta link input br img area))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -578,6 +578,12 @@
      (list *global-attributes* *event-attributes* (table<-list '(:name)))
    :satisfies (lambda (attributes) (getf attributes :name))
    :report "Missing required attribute :NAME."))
+
+(define-element style
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table<-list '(:media :type))))
+  (:pretty nil))
 
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
