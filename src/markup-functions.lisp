@@ -25,7 +25,7 @@
   (defun pprint-element (stream exp)
     (setf stream (or stream *standard-output*))
     (format stream "~:<~W~^ ~:S~^~1I ~_~@{~W~^ ~_~}~:>" exp))
-  (set-pprint-dispatch `(cons (member ,@(cdr standard-elements)))
+  (set-pprint-dispatch `(cons (member html5 ,@(cdr standard-elements)))
                        'pprint-element))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
