@@ -43,8 +43,7 @@
         )))
   (defparameter *event-attributes*
     (table<-list
-      '(
-        ;; Window events.
+      '(;; Window events.
         :onafterprint :onbeforeprint :onbeforeunload :onerror :onhashchange
         :onload :onmessage :onoffline :ononline :onpagehide :onpageshow
         :onpopstate :onresize :onstorage :onunload
@@ -72,8 +71,7 @@
 
 (defparameter *optional-attributes* nil)
 
-(defgeneric list-all-attributes
-    (thing))
+(defgeneric list-all-attributes (thing))
 
 (defun supportedp (key list)
   (or (find key *optional-attributes*)
@@ -120,8 +118,7 @@
 
 (defun escape (char) (values (gethash char *escape* char)))
 
-(defgeneric pprint-put
-    (stream thing &rest noise)
+(defgeneric pprint-put (stream thing &rest noise)
   (:method (stream (o list) &rest noise) (declare (ignore noise))
    (format stream "~{~/markup-functions:pprint-put/~^~_~}" o))
   (:method (stream (o string) &rest noise) (declare (ignore noise))
