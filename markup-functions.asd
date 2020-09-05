@@ -4,11 +4,16 @@
   :version
   "1.15.4"
   :depends-on
-  nil
+  (
+   "uiop" ; Utilities.
+   )
   :pathname
   "src/"
   :components
-  ((:file "markup-functions")))
+  ((:file "markup-functions"))
+  :author "SATO Shinichi"
+  :description "HTML5 generator."
+  :license "MIT")
 
 ;;; These forms below are added by JINGOH.GENERATOR.
 ;; Ensure in ASDF for pretty printings.
