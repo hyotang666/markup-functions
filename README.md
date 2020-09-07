@@ -268,6 +268,17 @@ but returns string which has doctype declaration.
 <HTML><TITLE>hoge</TITLE></HTML>"
 ```
 
+### Extend.
+
+You can write `PPRINT-PUT` method.
+For example, to support [`PLUMP:NODE`](https://github.com/Shinmera/plump), you can write method like below.
+
+```lisp
+(defmethod htmf:pprint-put (stream (node plump:node) &rest noise)
+  (declare (ignore noise))
+  (plump:serialize node stream))
+```
+
 ### Relaxing errors.
 
 Relaxing to `WARN`, bind `HTMF:*STRICT*` with `WARN`.

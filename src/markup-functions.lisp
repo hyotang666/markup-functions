@@ -14,7 +14,7 @@
        (empty-elements '(!doctype meta link input br img area))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
-       (dev-tools '(list-all-attributes))
+       (dev-tools '(list-all-attributes pprint-put))
        (all
         (append main-functions (cdr standard-elements) empty-elements config
                 dev-tools)))
