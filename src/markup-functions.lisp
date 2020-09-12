@@ -8,9 +8,9 @@
 
 (let* ((main-functions '(html5))
        (standard-elements
-        '(#:dummy html title head body footer h1 h2 h3 h4 h5 h6 p a div nav
-          header main form label b table tr td button ol ul li script mark
-          textarea span abbr map* style select option))
+        '(#:dummy a abbr b body button div figcaption figure footer form h1 h2
+          h3 h4 h5 h6 head header html iframe label li main map* mark nav ol
+          option p script select span style table td textarea title tr ul))
        (empty-elements '(!doctype meta link input br img area))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -603,6 +603,22 @@
   (:valid-parents '(select optgroup datalist)
    :report
      "<option> elements go inside a <select>, <optgroup>, or <datalist> element."))
+
+(define-element iframe
+  (:attributes
+     (list *global-attributes* *event-attributes*
+           (table<-list
+             '(:allow :allowfullscreen :allowpaymentrequest :height :name
+               :referrerpolicy :sandbox :src :srcdoc :width)))))
+
+(define-element figure
+  (:attributes (list *global-attributes* *event-attributes*)))
+
+(define-element figcaption
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:valid-parents '(figure)
+   :report
+     "The <figcaption> element can be placed as the first or last child of the <figure> element."))
 
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
