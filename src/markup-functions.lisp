@@ -159,7 +159,8 @@
   (defun <attributes-checker> (fun-name supported-attributes tag-name)
     `((defun ,fun-name (attributes)
         (if (not (listp attributes))
-            (error "~A require attributes but ~S." ',tag-name attributes)
+            (cerror "Ignore." "~A require attributes but ~S." ',tag-name
+                    attributes)
             (when *strict*
               (do* ((rest attributes (cddr rest))
                     (key (car rest) (car rest)))
@@ -167,8 +168,10 @@
                 (when (and (keywordp key)
                            (not (supportedp key ,supported-attributes))
                            (not (uiop:string-prefix-p "DATA-" key)))
-                  (funcall *strict* "Unknown attributes for tag ~A: ~S"
-                           ',tag-name key)))))))))
+                  (restart-case (funcall *strict*
+                                         "Unknown attributes for tag ~A: ~S"
+                                         ',tag-name key)
+                    (continue () :report "Ignore." nil))))))))))
 
 #| BNF
  | (define-empty-element tag-name &body clause+)
