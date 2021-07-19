@@ -6,6 +6,8 @@
 
 (in-package :markup-functions)
 
+(declaim (optimize speed))
+
 (let* ((main-functions '(html5))
        (standard-elements
         '(#:dummy a abbr b body button div figcaption figure footer form h1 h2
@@ -24,7 +26,7 @@
   (export all :htmf)
   (defun pprint-element (stream exp)
     (setf stream (or stream *standard-output*))
-    (format stream "~:<~W~^ ~:S~^~1I ~_~@{~W~^ ~_~}~:>" exp))
+    (funcall (formatter "~:<~W~^ ~:S~^~1I ~_~@{~W~^ ~_~}~:>") stream exp))
   (set-pprint-dispatch `(cons (member html5 ,@(cdr standard-elements)))
                        'pprint-element))
 
@@ -69,9 +71,13 @@
         ;; Misc event
         :ontoggle))))
 
+(declaim (type list *optional-attributes*))
+
 (defparameter *optional-attributes* nil)
 
 (defgeneric list-all-attributes (thing))
+
+(declaim (ftype (function (keyword list) (values t &optional)) supportedp))
 
 (defun supportedp (key list)
   (or (find key *optional-attributes*)
@@ -88,14 +94,16 @@
       (write (setf key (pprint-pop)) :stream stream)
       (pprint-exit-if-list-exhausted)
       (let ((v (pprint-pop)))
-        (format stream "='~W'"
-                (if (eq t v)
-                    key
-                    v))
+        (funcall (formatter "='~W'") stream
+                 (if (eq t v)
+                     key
+                     v))
         (pprint-exit-if-list-exhausted)
         (write-char #\Space stream)))))
 
 (defvar *inside-of* nil)
+
+(declaim (type (unsigned-byte 8) *indent* *depth*))
 
 (defvar *depth* 0)
 
@@ -121,9 +129,10 @@
 (defgeneric pprint-put (stream thing &rest noise)
   (:method (stream (o list) &rest noise)
     (declare (ignore noise))
-    (format stream "~{~/markup-functions:pprint-put/~^~_~}" o))
+    (funcall (formatter "~{~/markup-functions:pprint-put/~^~_~}") stream o))
   (:method (stream (o string) &rest noise)
-    (declare (ignore noise))
+    (declare (ignore noise)
+             (type simple-string o))
     (loop :for c :across o
           :do (write (escape c) :stream stream :escape nil)))
   (:method (stream (o function) &rest noise)
@@ -144,7 +153,7 @@
                    ,(if not
                         `(not (intersection ,(cadr clause) *inside-of*))
                         `(intersection ,(cadr clause) *inside-of*)))
-          (funcall *strict*
+          (funcall (coerce *strict* 'function)
                    ,(or (getf clause :report)
                         "~A tag is invalid be inside of ~S.")
                    ',name *inside-of*)))))
@@ -152,7 +161,7 @@
     (let ((satisfies (getf clause :satisfies)))
       (when satisfies
         `((when (and *strict* (not (funcall ,satisfies ,attributes)))
-            (funcall *strict*
+            (funcall (coerce *strict* 'function)
                      ,(or (getf clause :report)
                           "Not satisfies constraint. ~S ~S")
                      ',satisfies ,attributes))))))
@@ -168,10 +177,12 @@
                 (when (and (keywordp key)
                            (not (supportedp key ,supported-attributes))
                            (not (uiop:string-prefix-p "DATA-" key)))
-                  (restart-case (funcall *strict*
+                  (restart-case (funcall (coerce *strict* 'function)
                                          "Unknown attributes for tag ~A: ~S"
                                          ',tag-name key)
-                    (continue () :report "Ignore." nil))))))))))
+                    (continue ()
+                        :report "Ignore."
+                      nil))))))))))
 
 #| BNF
  | (define-empty-element tag-name &body clause+)
@@ -343,7 +354,7 @@
                          (push (existance-tag condition) elements))))
          (let ((result ,body))
            (when (and *strict* (not (intersection elements ,(cadr clause))))
-             (funcall *strict*
+             (funcall (coerce *strict* 'function)
                       ,(or (getf clause :report)
                            "Missing required elements. ~S")
                       ',(cadr clause)))
@@ -406,6 +417,8 @@
        (when ,supported-attributes
          ,(car (<attributes-checker> checker supported-attributes name)))
        ;; Main function.
+       (declaim
+        (ftype (function (list &rest t) (values function &optional)) ,name))
        (defun ,name (attributes &rest args)
          ,@(let ((documentation (cadr (assoc :documentation clauses))))
              (when documentation
@@ -625,7 +638,7 @@
 
 (defun html5 (attributes &rest args)
   (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
-               (funcall (apply #'html attributes args))))
+               (funcall (the function (apply #'html attributes args)))))
 
 #++
 (defun retrieve (url)
