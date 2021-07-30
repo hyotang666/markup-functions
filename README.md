@@ -228,35 +228,39 @@ Markup-functions generate pretty printing html.
 
 ## Usage
 
-Every element functions returns function as `(FUNCTION () STRING)`.
+Every element functions returns function as `(FUNCTION () NULL)`.
 
 ```lisp
 * (htmf:br)
 #<CLOSURE (LAMBDA () :IN BR) {...}>
 
 * (funcall *)
-"<BR>"
+<BR> ; <--- side effect.
+NIL
 ```
 
 Every empty element functions accepts key value pair as attributes.
 
 ```lisp
 * (funcall (htmf:meta :charset :utf-8))
-"<META CHARSET='UTF-8'>"
+<META CHARSET='UTF-8'>
+NIL
 ```
 
 When attribute value is `T`, value becomes key itself.
 
 ```lisp
 * (funcall (htmf:meta :charset t))
-"<META CHARSET='CHARSET'>"
+<META CHARSET='CHARSET'>
+NIL
 ```
 
 Every standard element functions accepts key value pair (i.e. plist) as its first argument.
 
 ```lisp
 * (funcall (htmf:a '(:href "/url") "label"))
-"<A HREF='/url'>label</A>"
+<A HREF='/url'>label</A>
+NIL
 ```
 
 Top level function `HTML5` has same API of standard element functions,
@@ -314,7 +318,7 @@ To accept not supported attributes (e.g. aria-label) temporarily, bind `HTMF:*OP
 Bind `CL:*PRINT-PRETTY*`.
 
 ```lisp
-(let ((*print-pretty* nil))
+(let ((*print-pretty* nil) (htmf:*strict* nil))
   (htmf:html5 nil
               (htmf:table '(:border 0 :cellpadding 4)
                 (loop :for i :below 25 :by 5
