@@ -103,18 +103,7 @@
 
 (defvar *inside-of* nil)
 
-(declaim (type (unsigned-byte 8) *indent* *depth*))
-
-(defvar *depth* 0)
-
 (defparameter *indent* 2)
-
-(defun indent (&optional de-indent-p)
-  (*
-    (if de-indent-p
-        (1- *depth*)
-        *depth*)
-    *indent*))
 
 (defparameter *escape*
   (let ((ht (make-hash-table)))
@@ -437,7 +426,6 @@
            ,@(<inside-check> (assoc :valid-parents clauses) name t)
            ,@(<inside-check> (assoc :invalid-parents clauses) name nil)
            (let ((*inside-of* (cons ',name *inside-of*))
-                 (*depth* (1+ *depth*))
                  ,@(when (assoc :pretty clauses)
                      `(*print-pretty*)))
              ,(let ((require (assoc :require clauses))
@@ -455,11 +443,10 @@
          (if (constantp attributes)
              `(lambda ()
                 (signal 'element-existance :tag ',',name)
-                (let ((*inside-of* (cons ',',name *inside-of*))
-                      (*depth* (1+ *depth*)))
+                (let ((*inside-of* (cons ',',name *inside-of*)))
                   (funcall ,(<tag-formatter> (eval attributes))
                            *standard-output*
-                           (list ',',name nil *indent* (list ,@args) *indent*
+                           (list ',',name nil *indent* (list ,@args)
                                  ',',name))))
              whole))
        ;; Describe
