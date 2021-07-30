@@ -137,7 +137,8 @@
           :do (write (escape c) :stream stream :escape nil)))
   (:method (stream (o function) &rest noise)
     (declare (ignore noise))
-    (write-string (funcall o) stream))
+    (let ((*standard-output* stream))
+      (funcall o)))
   (:method (stream (o rational) &rest noise)
     (declare (ignore noise))
     (write o :stream stream))
@@ -241,10 +242,14 @@
            (signal 'element-existance :tag ',tag-name)
            ,@(<inside-check> (assoc :valid-parants clauses) tag-name t)
            ,@(<inside-check> (assoc :invalid-parents clauses) tag-name nil)
-           (format nil
-                   (formatter
-                    "~<<~A~@[ ~:I~@_~/markup-functions:pprint-attributes/~]>~:>")
-                   (list ',tag-name args))))
+           (funcall
+             (formatter
+              #.(concatenate 'string "~<" ; pprint-logical-block.
+                             "<~A" ; open-tag
+                             "~@[ ~:I~@_~/markup-functions:pprint-attributes/~]" ; attributes
+                             ">" ; close-tag
+                             "~:>"))
+             *standard-output* (list ',tag-name args))))
        ;; Compile time attribute checker.
        #|
        ,@(when attributes-specified
@@ -368,7 +373,7 @@
                           (write-char #\Space s)
                           (pprint-attributes s attributes)
                           (write-string "~*" s)))
-                    ">~VI~_~{~/markup-functions:pprint-put/~^~_~}~VI~_</~A>~:>"))))
+                    ">~VI~_~{~/markup-functions:pprint-put/~^~_~}~I~_</~A>~:>"))))
 
 #| BNF
  | (define-element tag-name &body clause+)
@@ -437,9 +442,8 @@
                      `(*print-pretty*)))
              ,(let ((require (assoc :require clauses))
                     (body
-                     `(format nil ,(<tag-formatter> nil)
-                              (list ',name attributes (indent) args (indent t)
-                                    ',name))))
+                     `(funcall ,(<tag-formatter> nil) *standard-output*
+                               (list ',name attributes *indent* args ',name))))
                 (if require
                     (<require-check> body require)
                     body)))))
@@ -453,9 +457,10 @@
                 (signal 'element-existance :tag ',',name)
                 (let ((*inside-of* (cons ',',name *inside-of*))
                       (*depth* (1+ *depth*)))
-                  (format nil ,(<tag-formatter> (eval attributes))
-                          (list ',',name nil (indent) (list ,@args) (indent t)
-                                ',',name))))
+                  (funcall ,(<tag-formatter> (eval attributes))
+                           *standard-output*
+                           (list ',',name nil *indent* (list ,@args) *indent*
+                                 ',',name))))
              whole))
        ;; Describe
        (defmethod list-all-attributes ((o (eql ',name)))
@@ -637,8 +642,11 @@
      "The <figcaption> element can be placed as the first or last child of the <figure> element."))
 
 (defun html5 (attributes &rest args)
-  (concatenate 'string (funcall (!doctype :html)) (format nil "~<~:@_~:>" nil)
-               (funcall (the function (apply #'html attributes args)))))
+  (with-output-to-string (s)
+    (funcall
+      (formatter
+       "~<~/markup-functions:pprint-put/~:@_~/markup-functions:pprint-put/~:>")
+      s (list (!doctype :html) (apply #'html attributes args)))))
 
 #++
 (defun retrieve (url)
