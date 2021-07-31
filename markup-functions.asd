@@ -2,7 +2,7 @@
 (in-package :asdf)
 (defsystem "markup-functions"
   :version
-  "2.0.0"
+  "2.1.0"
   :depends-on
   (
    "uiop" ; Utilities.
@@ -10,7 +10,8 @@
   :pathname
   "src/"
   :components
-  ((:file "markup-functions"))
+  ((:file "markup-functions")
+   (:file "svg" :depends-on ("markup-functions")))
   :author "SATO Shinichi"
   :description "HTML5 generator."
   :license "MIT")
