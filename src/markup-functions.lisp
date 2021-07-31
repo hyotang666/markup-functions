@@ -569,7 +569,9 @@
 (define-element script
   (:attributes
      (list *global-attributes*
-           (table<-list '(:async :charset :defer :src :type)))))
+           (table<-list
+             '(:src :type :nomodule :async :defer :crossorigin :integrity
+               :referrerpolicy)))))
 
 (define-element mark
   (:attributes (list *global-attributes* *event-attributes*)))
