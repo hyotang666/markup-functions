@@ -281,6 +281,29 @@
 (set-pprint-dispatch '(cons (member define-empty-element define-element))
                      'pprint-define-empty-element)
 
+#++
+((lambda (string)
+   ;; Easy attributes scraper.
+   ;; https://html.spec.whatwg.org/multipage/embedded-content.html
+   (sort
+     (loop :for line
+                :in (uiop:split-string string :separator #.(string #\Newline))
+           :with *package* = (find-package :keyword)
+           :collect (read-from-string (subseq line 0 (ppcre:scan " — " line))))
+     #'string<))
+ "alt — Replacement text for use when images are not available
+    src — Address of the resource
+    srcset — Images to use in different situations, e.g., high-resolution displays, small monitors, etc.
+    sizes — Image sizes for different page layouts
+    crossorigin — How the element handles crossorigin requests
+    usemap — Name of image map to use
+    ismap — Whether the image is a server-side image map
+    width — Horizontal dimension
+    height — Vertical dimension
+    referrerpolicy — Referrer policy for fetches initiated by the element
+    decoding — Decoding hint to use when processing this image for presentation
+    loading — Used when determining loading deferral")
+
 (define-empty-element !doctype
   (:invalid-parents '(html)
    :report
