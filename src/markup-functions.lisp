@@ -471,19 +471,13 @@
                     (<require-check> body require)
                     body)))))
        ;; Compile time attributes check.
-       #++
        (define-compiler-macro ,name (&whole whole attributes &rest args)
-         (when (constantp attributes)
-           (,checker (eval attributes)))
-         (if (constantp attributes)
-             `(lambda ()
-                (signal 'element-existance :tag ',',name)
-                (let ((*inside-of* (cons ',',name *inside-of*)))
-                  (funcall ,(<tag-formatter> (eval attributes))
-                           *standard-output*
-                           (list ',',name nil *indent* (list ,@args)
-                                 ',',name))))
-             whole))
+         (declare (ignore args))
+         (when (and (compile-time-check) (constantp attributes))
+           (let ((attributes (eval attributes)))
+             ,@(<satisfies-check> (assoc :attributes clauses) 'attributes)
+             (,checker attributes)))
+         whole)
        ;; Describe
        (defmethod list-all-attributes ((o (eql ',name)))
          (mapcan
