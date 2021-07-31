@@ -647,8 +647,8 @@
   (:attributes
      (list *global-attributes* *event-attributes*
            (table<-list
-             '(:allow :allowfullscreen :allowpaymentrequest :height :name
-               :referrerpolicy :sandbox :src :srcdoc :width)))))
+             '(:allow :allowfullscreen :height :loading :name :referrerpolicy
+               :sandbox :src :srcdoc :width)))))
 
 (define-element figure
   (:attributes (list *global-attributes* *event-attributes*)))
