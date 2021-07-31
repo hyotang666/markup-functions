@@ -255,6 +255,14 @@ When attribute value is `T`, value becomes key itself.
 NIL
 ```
 
+When attribute value is `NIL`, only key is printed.
+
+```lisp
+* (funcall (htmf:meta '(:charset nil)))
+<META CHARSET>
+NIL
+```
+
 Every standard element functions accepts key value pair (i.e. plist) as its first argument.
 
 ```lisp

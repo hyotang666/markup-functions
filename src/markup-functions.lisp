@@ -95,7 +95,7 @@
       (write (setf key (pprint-pop)) :stream stream)
       (pprint-exit-if-list-exhausted)
       (let ((v (pprint-pop)))
-        (funcall (formatter "='~W'") stream
+        (funcall (formatter "~@[='~W'~]") stream
                  (if (eq t v)
                      key
                      v))
