@@ -309,7 +309,8 @@
   (:attributes
      (list *global-attributes* *event-attributes*
            (table<-list
-             '(:crossorigin :href :hreflang :media :referrerpolicy :rel :sizes
+             '(:as :color :crossorigin :disabled :href :hreflang :imagesizes
+               :imagesrcset :integrity :media :referrerpolicy :rel :sizes
                :title :type))))
   (:valid-parents '(head)
    :report
