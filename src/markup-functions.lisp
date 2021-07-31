@@ -12,7 +12,8 @@
        (standard-elements
         '(#:dummy a abbr b body button div figcaption figure footer form h1 h2
           h3 h4 h5 h6 head header html iframe label li main map* mark nav ol
-          option p script select span style table td textarea title tr ul))
+          option p script select span style table td textarea title tr ul
+          blockquote))
        (empty-elements '(!doctype meta link input br img area))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -627,6 +628,9 @@
   (:valid-parents '(figure)
    :report
      "The <figcaption> element can be placed as the first or last child of the <figure> element."))
+
+(define-element blockquote
+  (:attributes (list *global-attributes* (table<-list '(:cite)))))
 
 (defun html5 (attributes &rest args)
   (with-output-to-string (s)
