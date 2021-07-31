@@ -254,7 +254,9 @@
        ,@(when attributes-specified
            `((define-compiler-macro ,tag-name (&whole whole args)
                (when (and (compile-time-check) (constantp args))
-                 (,checker (eval args)))
+                 (let ((args (eval args)))
+                   ,@(<satisfies-check> (assoc :attributes clauses) 'args)
+                   (,checker args)))
                whole)))
        ;; Describe.
        (defmethod list-all-attributes ((s (eql ',tag-name)))
