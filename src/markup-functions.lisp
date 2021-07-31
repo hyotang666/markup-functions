@@ -8,6 +8,14 @@
 
 (declaim (optimize speed))
 
+(defun compile-time-check (&optional (do? nil suppliedp))
+  (let ((tag :htmf-compile-time-check))
+    (cond (do? (pushnew tag *features*))
+          (suppliedp (setf *features* (remove tag *features*)))
+          (t (uiop:featurep tag)))))
+
+(compile-time-check t)
+
 (let* ((main-functions '(html5))
        (standard-elements
         '(#:dummy a abbr b body button div figcaption figure footer form h1 h2
@@ -17,7 +25,7 @@
        (empty-elements '(!doctype meta link input br img area))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
-       (dev-tools '(list-all-attributes pprint-put))
+       (dev-tools '(list-all-attributes pprint-put compile-time-check))
        (all
         (append main-functions (cdr standard-elements) empty-elements config
                 dev-tools)))
@@ -243,12 +251,11 @@
                              "~:>"))
              *standard-output* (list ',tag-name args))))
        ;; Compile time attribute checker.
-       #|
        ,@(when attributes-specified
-           `((define-compiler-macro ,tag-name (&whole whole &rest args)
-               (,checker args)
+           `((define-compiler-macro ,tag-name (&whole whole args)
+               (when (and (compile-time-check) (constantp args))
+                 (,checker (eval args)))
                whole)))
-       |#
        ;; Describe.
        (defmethod list-all-attributes ((s (eql ',tag-name)))
          ,(when attributes-specified
