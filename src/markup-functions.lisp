@@ -40,8 +40,10 @@
       ht))
   (defparameter *global-attributes*
     (table<-list
-      '(:accesskey :class :contenteditable :dir :draggable :dropzone :hidden
-        :id :lang :spellcheck :style :tabindex :title :translate
+      '(:accesskey :autocapitalize :autofocus :contenteditable :dir :draggable
+        :enterkeyhint :hidden :inputmode :is :itemid :itemprop :itemref
+        :itemscope :itemtype :lang :nonce :spellcheck :style :tabindex :title
+        :translate
         ;; :data-*
         )))
   (defparameter *event-attributes*
