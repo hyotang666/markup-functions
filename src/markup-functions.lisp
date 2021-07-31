@@ -333,8 +333,8 @@
   (:attributes
      (list *global-attributes* *event-attributes*
            (table<-list
-             '(:alt :crossorigin :height :ismap :longdesc :referrerpolicy
-               :sizes :src :srcset :usemap :width)))
+             '(:alt :crossorigin :decoding :height :ismap :loading
+               :referrerpolicy :sizes :src :srcset :usemap :width)))
    :satisfies
      (lambda (attributes) (and (getf attributes :alt) (getf attributes :src)))
    :report "The <img> tag has two required attributes: src and alt."))
