@@ -1,7 +1,7 @@
 (in-package :markup-functions)
 
 (let* ((main-functions 'nil)
-       (standard-elements '(svg))
+       (standard-elements '(:dummy svg))
        (empty-elements '(path))
        (all (append main-functions (cdr standard-elements) empty-elements)))
   (unless (find-package :htmf.svg)
