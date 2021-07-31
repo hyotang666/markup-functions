@@ -219,7 +219,7 @@
        ,@(when attributes-specified
            (<attributes-checker> checker supported-attributes tag-name))
        ;; Main function.
-       (defun ,tag-name (&rest args)
+       (defun ,tag-name (args)
          ,@(let ((documentation (cadr (assoc :documentation clauses))))
              (when documentation
                (list documentation)))
