@@ -360,9 +360,8 @@
            (table<-list
              '(:alt :crossorigin :decoding :height :ismap :loading
                :referrerpolicy :sizes :src :srcset :usemap :width)))
-   :satisfies
-     (lambda (attributes) (and (getf attributes :alt) (getf attributes :src)))
-   :report "The <img> tag has two required attributes: src and alt."))
+   :satisfies (lambda (attributes) (getf attributes :src))
+   :report "Missing src attribute for <img> tag."))
 
 (define-empty-element area
   (:attributes
