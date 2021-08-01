@@ -92,6 +92,8 @@
 
 (defun supportedp (key list)
   (or (find key *optional-attributes*)
+      (eq :role key)
+      (uiop:string-prefix-p "ARIA-" key)
       (some (lambda (ht) (gethash key ht)) list)))
 
 (defun pprint-attributes (stream args &rest noise)
