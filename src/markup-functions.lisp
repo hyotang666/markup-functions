@@ -293,7 +293,7 @@
      (loop :for line
                 :in (uiop:split-string string :separator #.(string #\Newline))
            :with *package* = (find-package :keyword)
-           :collect (read-from-string (subseq line 0 (ppcre:scan " — " line))))
+           :collect (read-from-string (subseq line 0 (search " — " line))))
      #'string<))
  "alt — Replacement text for use when images are not available
     src — Address of the resource
