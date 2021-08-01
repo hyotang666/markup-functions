@@ -21,7 +21,7 @@
         '(#:dummy a abbr b body button div figcaption figure footer form h1 h2
           h3 h4 h5 h6 head header html iframe label li main map* mark nav ol
           option p script select span style table td textarea title tr ul
-          blockquote))
+          blockquote article section strong))
        (empty-elements '(!doctype meta link input br img area))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -661,6 +661,21 @@
 
 (define-element blockquote
   (:attributes (list *global-attributes* (table<-list '(:cite)))))
+
+(define-element article
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:documentation
+     "The <article> tag specifies independent, self-contained content."))
+
+(define-element section
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:documentation "The <section> tag defines a section in a document."))
+
+(define-element strong
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:documentation
+     "The <strong> tag is used to define text with strong importance.
+The content inside is typically displayed in bold."))
 
 (defun html5 (attributes &rest args)
   (with-output-to-string (s)
