@@ -1,16 +1,40 @@
 (in-package :markup-functions)
 
 (let* ((main-functions 'nil)
-       (standard-elements '(:dummy svg))
-       (empty-elements '(path))
+       (standard-elements '(:dummy svg text))
+       (empty-elements '(path rect))
        (all (append main-functions (cdr standard-elements) empty-elements)))
   (unless (find-package :htmf.svg)
     (make-package :htmf.svg :use nil))
   (import all :htmf.svg)
   (export all :htmf.svg)
-  #++
   (set-pprint-dispatch `(cons (member ,@(cdr standard-elements)))
                        'pprint-element))
+
+(defparameter *standard-color-names*
+  '(:aliceblue :antiquewhite :aqua :aquamarine :azure :beige :bisque :black
+    :blanchedalmond :blue :blueviolet :brown :burlywood :cadetblue :chartreuse
+    :chocolate :coral :cornflowerblue :cornsilk :crimson :cyan :darkblue
+    :darkcyan :darkgoldenrod :darkgray :darkgreen :darkgrey :darkkhaki
+    :darkmagenta :darkolivegreen :darkorange :darkorchid :darkred :darksalmon
+    :darkseagreen :darkslateblue :darkslategray :darkslategrey :darkturquoise
+    :darkviolet :deeppink :deepskyblue :dimgray :dodgerblue :firebrick
+    :floralwhite :forestgreen :fuchsia :gainsboro :ghostwhite :gold :goldenrod
+    :gray :green :greenyellow :grey :honeydew :hotpink :indianred :indigo
+    :ivory :khaki :lavender :lavenderblush :lawngreen :lemonchiffon :lightblue
+    :lightcoral :lightcyan :lightgoldenrodyellow :lightgray :lightgreen
+    :lightgrey :lightpink :lightsalmon :lightseagreen :lightskyblue
+    :lightslategray :lightslategrey :lightsteelblue :lightyellow :lime
+    :limegreen :linen :magenta :maroon :mediumaquamarine :mediumblue
+    :mediumorchid :mediumpurple :mediumseagreen :mediumslateblue
+    :mediumspringgreen :mediumturquoise :mediumvioletred :midnightblue
+    :mintcream :mistyrose :moccasin :navajowhite :navy :oldlace :olive
+    :olivedrab :orange :orangered :orchid :palegoldenrod :palegreen
+    :paleturquoise :palevioletred :papayawhip :peachpuff :peru :pink :plum
+    :powderblue :purple :rebeccapurple :red :rosybrown :royalblue :saddlebrown
+    :salmon :sandybrown :seagreen :seashell :sienna :silver :skyblue :slateblue
+    :slategray :slategrey :snow :springgreen :steelblue :tan :teal :thistle
+    :tomato :turquoise :violet :wheat :white :whitesmoke :yellow :yellowgreen))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; DEFINE-ELEMENT and DEFINE-EMPTY-ELEMENT needs this eval-when.
@@ -64,7 +88,8 @@
         :stroke-width :text-anchor :text-decoration :text-rendering :transform
         :unicode-bidi :vector-effect :visibility :word-spacing :writing-mode))
     ;; https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation
-    "SVG presentation attributes are CSS properties that can be used as attributes on SVG elements."))
+    "SVG presentation attributes are CSS properties that can be used as attributes on SVG elements.")
+  (defparameter *svg-styling-attributes* (table<-list '(:class :style))))
 
 #++
 ((lambda (string)
@@ -99,3 +124,24 @@
            (table<-list
              '(:viewbox :preserveaspectratio :transform :x :y :width
                :height)))))
+
+(define-empty-element rect
+  (:attributes
+     (list *svg-aria-attributes* *svg-conditional-processing-attributes*
+           *svg-core-attributes* *svg-global-event-attributes*
+           *svg-document-element-event-attributes*
+           *svg-presentation-attributes*
+           (table<-list '(:pathlength :x :y :width :height :rx :ry))))
+  (:documentation
+     "The ‘rect’ element defines a rectangle which is axis-aligned with the current user coordinate system.
+Rounded rectangles can be achieved by setting non-zero values for the rx and ry geometric properties."))
+
+(define-element text
+  (:attributes
+     (list *svg-aria-attributes* *svg-conditional-processing-attributes*
+           *svg-core-attributes* *svg-global-event-attributes*
+           *svg-document-element-event-attributes*
+           *svg-presentation-attributes*
+           (table<-list '(:lengthadjust :x :y :dx :dy :rotate :textlength))))
+  (:documentation
+     "The ‘text’ element defines a graphics element consisting of text."))
