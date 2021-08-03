@@ -53,6 +53,7 @@
         :itemscope :itemtype :lang :nonce :spellcheck :style :tabindex :title
         :translate
         ;; :data-*
+	:class :id :slot ; from DOM
         )))
   (defparameter *event-attributes*
     (table<-list
