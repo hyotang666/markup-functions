@@ -44,27 +44,13 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; DEFINE-ELEMENT and DEFINE-EMPTY-ELEMENT needs this eval-when.
-  (defparameter *svg-aria-attributes*
-    (table<-list
-      '(:aria-activedescendant :aria-atomic :aria-autocomplete :aria-busy
-        :aria-checked :aria-colcount :aria-colindex :aria-colspan
-        :aria-controls :aria-current :aria-describedby :aria-details
-        :aria-disabled :aria-dropeffect :aria-errormessage :aria-expanded
-        :aria-flowto :aria-grabbed :aria-haspopup :aria-hidden :aria-invalid
-        :aria-keyshortcuts :aria-label :aria-labelledby :aria-level :aria-live
-        :aria-modal :aria-multiline :aria-multiselectable :aria-orientation
-        :aria-owns :aria-placeholder :aria-posinset :aria-pressed
-        :aria-readonly :aria-relevant :aria-required :aria-roledescription
-        :aria-rowcount :aria-rowindex :aria-rowspan :aria-selected
-        :aria-setsize :aria-sort :aria-valuemax :aria-valuemin :aria-valuenow
-        :aria-valuetext :role)))
-  (defparameter *svg-conditional-processing-attributes*
+  (defparameter *conditional-processing-attributes*
     (table<-list '(:requiredextensions :systemlanguage)))
-  (defparameter *svg-core-attributes*
+  (defparameter *core-attributes*
     (table<-list '(:id :tabindex :autofocus :lang :xml :space :class :style)))
-  (defparameter *svg-document-event-attributes*
+  (defparameter *document-event-attributes*
     (table<-list '(:onunload :onabort :onerror :onresize :onscroll)))
-  (defparameter *svg-global-event-attributes*
+  (defparameter *global-event-attributes*
     (table<-list
       '(:oncancel :oncanplay :oncanplaythrough :onchange :onclick :onclose
         :oncuechange :ondblclick :ondrag :ondragend :ondragenter :ondragexit
@@ -76,9 +62,9 @@
         :onprogress :onratechange :onreset :onresize :onscroll :onseeked
         :onseeking :onselect :onshow :onstalled :onsubmit :onsuspend
         :ontimeupdate :ontoggle :onvolumechange :onwaiting :onwheel)))
-  (defparameter *svg-document-element-event-attributes*
+  (defparameter *document-element-event-attributes*
     (table<-list '(:oncopy :oncut :onpaste)))
-  (defparameter *svg-presentation-attributes*
+  (defparameter *presentation-attributes*
     (table<-list
       '(:alignment-baseline :baseline-shift :clip :clip-path :clip-rule :color
         :color-interpolation :color-interpolation-filters :color-profile
@@ -95,7 +81,7 @@
         :unicode-bidi :vector-effect :visibility :word-spacing :writing-mode))
     ;; https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation
     "SVG presentation attributes are CSS properties that can be used as attributes on SVG elements.")
-  (defparameter *svg-styling-attributes* (table<-list '(:class :style))))
+  (defparameter *styling-attributes* (table<-list '(:class :style))))
 
 #++
 ((lambda (string)
@@ -116,27 +102,24 @@
 
 (define-empty-element path
   (:attributes
-     (list *svg-aria-attributes* *svg-conditional-processing-attributes*
-           *svg-core-attributes* *svg-global-event-attributes*
-           *svg-document-element-event-attributes*
-           *svg-presentation-attributes* (table<-list '(:pathlength :d)))))
+     (list *conditional-processing-attributes* *core-attributes*
+           *global-event-attributes* *document-element-event-attributes*
+           *presentation-attributes* (table<-list '(:pathlength :d)))))
 
 (define-element svg
   (:attributes
-     (list *svg-aria-attributes* *svg-conditional-processing-attributes*
-           *svg-core-attributes* *svg-document-event-attributes*
-           *svg-global-event-attributes*
-           *svg-document-element-event-attributes*
+     (list *conditional-processing-attributes* *core-attributes*
+           *document-event-attributes* *global-event-attributes*
+           *document-element-event-attributes*
            (table<-list
              '(:viewbox :preserveaspectratio :transform :x :y :width
                :height)))))
 
 (define-empty-element rect
   (:attributes
-     (list *svg-aria-attributes* *svg-conditional-processing-attributes*
-           *svg-core-attributes* *svg-global-event-attributes*
-           *svg-document-element-event-attributes*
-           *svg-presentation-attributes*
+     (list *conditional-processing-attributes* *core-attributes*
+           *global-event-attributes* *document-element-event-attributes*
+           *presentation-attributes*
            (table<-list '(:pathlength :x :y :width :height :rx :ry))))
   (:documentation
      "The ‘rect’ element defines a rectangle which is axis-aligned with the current user coordinate system.
@@ -144,10 +127,9 @@ Rounded rectangles can be achieved by setting non-zero values for the rx and ry 
 
 (define-element text
   (:attributes
-     (list *svg-aria-attributes* *svg-conditional-processing-attributes*
-           *svg-core-attributes* *svg-global-event-attributes*
-           *svg-document-element-event-attributes*
-           *svg-presentation-attributes*
+     (list *conditional-processing-attributes* *core-attributes*
+           *global-event-attributes* *document-element-event-attributes*
+           *presentation-attributes*
            (table<-list '(:lengthadjust :x :y :dx :dy :rotate :textlength))))
   (:documentation
      "The ‘text’ element defines a graphics element consisting of text."))
