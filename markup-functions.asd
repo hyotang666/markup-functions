@@ -13,7 +13,9 @@
   ((:file "markup-functions")
    (:file "svg" :depends-on ("markup-functions")))
   :author "SATO Shinichi"
-  :description "HTML5 generator."
+  :description "Pretty HTML generator which have compile time syntax checking."
+  :source-control (:git "git@github.com:hyotang666/markup-functions")
+  :bug-tracker "https://github.com/hyotang666/markup-functions/issues"
   :license "MIT")
 
 ;;; These forms below are added by JINGOH.GENERATOR.
