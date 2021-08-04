@@ -1,4 +1,10 @@
-(in-package :markup-functions)
+(in-package :cl-user)
+
+(defpackage :markup-functions.svg
+  (:use :cl :markup-functions)
+  (:documentation "To develop HTMF.SVG package."))
+
+(in-package :markup-functions.svg)
 
 (let* ((main-functions 'nil)
        (standard-elements '(:dummy svg text))

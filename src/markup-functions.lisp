@@ -1,8 +1,22 @@
 (in-package :cl-user)
 
 (defpackage :markup-functions
+  (:documentation "Provide core features to develop markup functions.")
   (:use :cl)
-  (:export))
+  (:export ;;;; Main DSL.
+           #:define-empty-element
+           #:define-element)
+  (:export ;;;; Config.
+           #:compile-time-check
+           #:*strict*
+           #:*indent*
+           #:*optional-attributes*
+           *print-case*
+           *print-pretty*)
+  (:export ;;;; Useful helpers.
+           #:table<-list
+           #:list-all-attributes
+           #:pprint-put))
 
 (in-package :markup-functions)
 
@@ -30,7 +44,8 @@
         (append main-functions (cdr standard-elements) empty-elements config
                 dev-tools)))
   (unless (find-package :htmf)
-    (make-package :htmf :use nil))
+    (setf (documentation (make-package :htmf :use nil) t)
+            "Provide HTML tag functions."))
   (import all :htmf)
   (export all :htmf)
   (defun pprint-element (stream exp)
@@ -53,7 +68,7 @@
         :itemscope :itemtype :lang :nonce :spellcheck :style :tabindex :title
         :translate
         ;; :data-*
-	:class :id :slot ; from DOM
+        :class :id :slot ; from DOM
         )))
   (defparameter *event-attributes*
     (table<-list
