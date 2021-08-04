@@ -16,7 +16,8 @@
   (:export ;;;; Useful helpers.
            #:table<-list
            #:list-all-attributes
-           #:pprint-put))
+           #:pprint-put
+           #:pprint-element))
 
 (in-package :markup-functions)
 
