@@ -99,11 +99,13 @@
         ;; Misc event
         :ontoggle))))
 
-(declaim (type list *optional-attributes*))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (declaim (type list *optional-attributes*))
+  (defparameter *optional-attributes* nil))
 
-(defparameter *optional-attributes* nil)
-
-(defgeneric list-all-attributes (thing))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; This eval-when is for muffling redefine warning.
+  (defgeneric list-all-attributes (thing)))
 
 (declaim (ftype (function (keyword list) (values t &optional)) supportedp))
 
@@ -704,7 +706,7 @@ The content inside is typically displayed in bold."))
     (funcall
       (formatter
        "~<~/markup-functions:pprint-put/~:@_~/markup-functions:pprint-put/~:>")
-      s (list (!doctype :html) (apply #'html attributes args)))))
+      s (list (!doctype '(:html)) (apply #'html attributes args)))))
 
 #++
 (defun retrieve (url)
