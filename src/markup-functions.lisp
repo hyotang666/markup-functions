@@ -36,7 +36,7 @@
         '(#:dummy a abbr b body button div figcaption figure footer form h1 h2
           h3 h4 h5 h6 head header html iframe label li main map* mark nav ol
           option p script select span style table td textarea title tr ul
-          blockquote article section strong))
+          blockquote article section strong aside))
        (empty-elements '(!doctype meta link input br img area hr))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -700,6 +700,14 @@
   (:documentation
      "The <strong> tag is used to define text with strong importance.
 The content inside is typically displayed in bold."))
+
+(define-element aside
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:documentation
+     "The <aside> tag defines some content aside from the content it is placed in.
+The aside content should be indirectly related to the surrounding content.
+Tip: The <aside> content is often placed as a sidebar in a document.
+Note: The <aside> element does not render as anything special in a browser. However, you can use CSS to style the <aside> element."))
 
 (defun html5 (attributes &rest args)
   (with-output-to-string (s)
