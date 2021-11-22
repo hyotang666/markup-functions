@@ -37,7 +37,7 @@
           h3 h4 h5 h6 head header html iframe label li main map* mark nav ol
           option p script select span style table td textarea title tr ul
           blockquote article section strong))
-       (empty-elements '(!doctype meta link input br img area))
+       (empty-elements '(!doctype meta link input br img area hr))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
        (dev-tools '(list-all-attributes pprint-put compile-time-check))
@@ -390,6 +390,9 @@
                :target :type))))
   (:valid-parents '(map*)
    :report "The <area> element is always nested inside a <map> tag."))
+
+(define-empty-element hr
+  (:attributes (list *global-attributes* *event-attributes*)))
 
 (define-condition element-existance ()
   ((tag :initarg :tag :reader existance-tag)))
