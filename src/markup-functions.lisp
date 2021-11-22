@@ -36,7 +36,7 @@
         '(#:dummy a abbr b body button div figcaption figure footer form h1 h2
           h3 h4 h5 h6 head header html iframe label li main map* mark nav ol
           option p script select span style table td textarea title tr ul
-          blockquote article section strong aside))
+          blockquote article section strong aside i))
        (empty-elements '(!doctype meta link input br img area hr))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -708,6 +708,18 @@ The content inside is typically displayed in bold."))
 The aside content should be indirectly related to the surrounding content.
 Tip: The <aside> content is often placed as a sidebar in a document.
 Note: The <aside> element does not render as anything special in a browser. However, you can use CSS to style the <aside> element."))
+
+(define-element i
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:documentation
+     "The <i> tag defines a part of text in an alternate voice or mood. The content inside is typically displayed in italic.
+The <i> tag is often used to indicate a technical term, a phrase from another language, a thought, a ship name, etc.
+Use the <i> element only when there is not a more appropriate semantic element, such as:
+    <em> (emphasized text)
+    <strong> (important text)
+    <mark> (marked/highlighted text)
+    <cite> (the title of a work)
+    <dfn> (a definition term)"))
 
 (defun html5 (attributes &rest args)
   (with-output-to-string (s)
