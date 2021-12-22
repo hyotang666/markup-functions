@@ -36,7 +36,7 @@
         '(#:dummy a abbr b body button div figcaption figure footer form h1 h2
           h3 h4 h5 h6 head header html iframe label li main map* mark nav ol
           option p script select span style table td textarea title tr ul
-          blockquote article section strong aside i))
+          blockquote article section strong aside i details summary))
        (empty-elements '(!doctype meta link input br img area hr))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -720,6 +720,24 @@ Use the <i> element only when there is not a more appropriate semantic element, 
     <mark> (marked/highlighted text)
     <cite> (the title of a work)
     <dfn> (a definition term)"))
+
+(define-element details
+  (:attributes
+     (list *global-attributes* *event-attributes* (table<-list '(:open))))
+  (:documentation
+     "The <details> tag specifies additional details that the user can open and close on demand.
+The <details> tag is often used to create an interactive widget that the user can open and close.
+By default, the widget is closed. When open, it expands, and displays the content within.
+Any sort of content can be put inside the <details> tag.
+Tip: The <summary> tag is used in conjuction with <details> to specify a visible heading for the details."))
+
+(define-element summary
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:valid-parents '(details))
+  (:documentation
+     "The <summary> tag defines a visible heading for the <details> element.
+The heading can be clicked to view/hide the details.
+Note: The <summary> element should be the first child element of the <details> element."))
 
 (defun html5 (attributes &rest args)
   (with-output-to-string (s)
