@@ -36,7 +36,7 @@
         '(#:dummy a abbr b body button div figcaption figure footer form h1 h2
           h3 h4 h5 h6 head header html iframe label li main map* mark nav ol
           option p script select span style table td textarea title tr ul
-          blockquote article section strong aside i details summary))
+          blockquote article section strong aside i details summary em))
        (empty-elements '(!doctype meta link input br img area hr))
        (config
         '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
@@ -738,6 +738,12 @@ Tip: The <summary> tag is used in conjuction with <details> to specify a visible
      "The <summary> tag defines a visible heading for the <details> element.
 The heading can be clicked to view/hide the details.
 Note: The <summary> element should be the first child element of the <details> element."))
+
+(define-element em
+  (:attributes (list *global-attributes* *event-attributes*))
+  (:documentation "The <em> tag is used to define emphasized text.
+The content inside is typically displayed in italic.
+A screen reader will pronounce the words in <em> with an emphasis, using verbal stress."))
 
 (defun html5 (attributes &rest args)
   (with-output-to-string (s)
