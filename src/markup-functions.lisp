@@ -40,7 +40,8 @@
           blockquote article section strong aside i details summary em))
        (empty-elements '(!doctype meta link input br img area hr))
        (config
-        '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*))
+        '(*indent* *strict* *print-case* *print-pretty* *optional-attributes*
+          *attribute-value-delimiter*))
        (dev-tools '(list-all-attributes pprint-put compile-time-check))
        (all
         (append main-functions (cdr standard-elements) empty-elements config
