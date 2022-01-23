@@ -11,6 +11,7 @@
            #:*strict*
            #:*indent*
            #:*optional-attributes*
+           #:*attribute-value-delimiter*
            *print-case*
            *print-pretty*)
   (:export ;;;; Useful helpers.
@@ -115,6 +116,19 @@
       (uiop:string-prefix-p "ARIA-" key)
       (some (lambda (ht) (gethash key ht)) list)))
 
+(defparameter *attribute-value-delimiter* #\')
+
+(defun pprint-escape-attribute-value (output value &optional colonp atsignp)
+  (declare (ignore atsignp))
+  (setf output (or output *standard-output*))
+  (loop :for char :across (write-to-string value)
+        :initially (and colonp (write-char *attribute-value-delimiter* output))
+        :if (char= *attribute-value-delimiter* char)
+          :do (write-char #\\ output)
+        :end
+        :do (write-char char output)
+        :finally (and colonp (write-char *attribute-value-delimiter* output))))
+
 (defun pprint-attributes (stream args &rest noise)
   (declare (ignore noise))
   (setf stream (or stream *standard-output*))
@@ -126,10 +140,13 @@
       (write (setf key (pprint-pop)) :stream stream)
       (pprint-exit-if-list-exhausted)
       (let ((v (pprint-pop)))
-        (funcall (formatter "~@[='~W'~]") stream
-                 (if (eq t v)
-                     key
-                     v))
+        (funcall
+          (formatter
+           "~@[=~:/markup-functions:pprint-escape-attribute-value/~]")
+          stream
+          (if (eq t v)
+              key
+              v))
         (pprint-exit-if-list-exhausted)
         (write-char #\Space stream)))))
 
