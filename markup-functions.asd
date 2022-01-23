@@ -2,7 +2,7 @@
 (in-package :asdf)
 (defsystem "markup-functions"
   :version
-  "4.0.2"
+  "4.0.3"
   :depends-on
   (
    "uiop" ; Utilities.

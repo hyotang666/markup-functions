@@ -125,9 +125,9 @@
   (loop :for char :across (write-to-string value)
         :initially (and colonp (write-char *attribute-value-delimiter* output))
         :if (char= *attribute-value-delimiter* char)
-          :do (write-char #\\ output)
-        :end
-        :do (write-char char output)
+          :do (funcall (formatter "&#~D;") output (char-code char))
+        :else
+          :do (write-char char output)
         :finally (and colonp (write-char *attribute-value-delimiter* output))))
 
 (defun pprint-attributes (stream args &rest noise)
