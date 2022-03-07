@@ -219,8 +219,19 @@
                            (not (supportedp key ,supported-attributes))
                            (not (uiop:string-prefix-p "DATA-" key)))
                   (restart-case (funcall (coerce *strict* 'function)
-                                         "Unknown attributes for tag ~A: ~S"
-                                         ',tag-name key)
+                                         "Unknown attributes for tag ~A: ~S ~:@_~? ~:@_~?"
+                                         ',tag-name key
+                                         "Did you mean ~#[~;~S~;~S or ~S~:;~S, ~S or ~S~]?"
+                                         (fuzzy-match:fuzzy-match (string key)
+                                                                  (loop :for attr
+                                                                             :in ,supported-attributes
+                                                                        :append (loop :for key
+                                                                                           :being :each
+                                                                                           :hash-key :of
+                                                                                           attr
+                                                                                      :collect key)))
+                                         "For details, evaluate ~S."
+                                         (list (list 'describe '',tag-name)))
                     (continue ()
                         :report "Ignore."
                       nil))))))))))
@@ -270,10 +281,15 @@
        ,@(when attributes-specified
            (<attributes-checker> checker supported-attributes tag-name))
        ;; Main function.
+       (defmethod documentation
+                  ((this (eql ',tag-name)) (type (eql 'function)))
+         (format nil "~<~@[~A ~:@_~]Supported attributes: ~2I~:@_~S~:>"
+                 (list
+                   ,(let ((documentation (cadr (assoc :documentation clauses))))
+                      (when documentation
+                        documentation))
+                   (list-all-attributes ',tag-name))))
        (defun ,tag-name (args)
-         ,@(let ((documentation (cadr (assoc :documentation clauses))))
-             (when documentation
-               (list documentation)))
          ,@(when attributes-specified
              `((,checker args))) ; Runtime attributes check.
          ,@(<satisfies-check> (assoc :attributes clauses) 'args)
@@ -489,12 +505,16 @@
        (when ,supported-attributes
          ,(car (<attributes-checker> checker supported-attributes name)))
        ;; Main function.
+       (defmethod documentation ((this (eql ',name)) (type (eql 'function)))
+         (format nil "~<~@[~A ~:@_~]Supported attributes:~2I ~:@_~S~:>"
+                 (list
+                   ,(let ((documentation (cadr (assoc :documentation clauses))))
+                      (when documentation
+                        documentation))
+                   (list-all-attributes ',name))))
        (declaim
         (ftype (function (list &rest t) (values function &optional)) ,name))
        (defun ,name (attributes &rest args)
-         ,@(let ((documentation (cadr (assoc :documentation clauses))))
-             (when documentation
-               (list documentation)))
          (when ,supported-attributes
            (,checker attributes))
          ,@(<satisfies-check> (assoc :attributes clauses) 'attributes)

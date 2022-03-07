@@ -2,10 +2,11 @@
 (in-package :asdf)
 (defsystem "markup-functions"
   :version
-  "4.0.3"
+  "4.0.4"
   :depends-on
   (
    "uiop" ; Utilities.
+   "fuzzy-match"        ; String fuzzy matcih especially for better error messages.
    )
   :pathname
   "src/"
